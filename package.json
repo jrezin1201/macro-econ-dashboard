@@ -1,7 +1,8 @@
 {
-  "name": "web-app-template",
+  "name": "finance-dashboard",
   "private": true,
   "version": "1.0.0",
+  "description": "Economic data visualization platform powered by FRED (Federal Reserve Economic Data)",
   "type": "module",
   "scripts": {
     "dev": "next dev",
@@ -16,12 +17,15 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
+    "@heroicons/react": "^2.2.0",
     "@prisma/client": "^5.22.0",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.23.26",
     "next": "^15.2.8",
     "next-auth": "^5.0.0-beta.30",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "recharts": "^3.6.0",
     "stripe": "^20.1.0",
     "zod": "^3.24.1"
   },

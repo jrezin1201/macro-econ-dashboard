@@ -78,50 +78,29 @@ export interface SiteConfig {
 
 export const siteConfig: SiteConfig = {
   // App Metadata
-  name: "The Nexus",
-  description: "A production-ready Next.js boilerplate with vertical slice architecture",
-  url: "https://nexus.example.com",
+  name: "Finance Dashboard",
+  description: "Economic data visualization platform powered by FRED (Federal Reserve Economic Data)",
+  url: "https://finance-dashboard.example.com",
 
   // Feature Flags
   // Add/remove features from this array to enable/disable them
   activeFeatures: [
-    "landing",      // Hero pages & marketing
-    "auth",         // User authentication
-    "billing",      // Stripe payments
-    "component-lib", // UI component showcase
-    "canvas",       // Collaboration canvas
-    "dashboard-builder", // Dashboard builder
-    "workflows",    // Workflow automation
-    "api-playground", // API playground
-    "estimator",     // App estimator
-    "audit-log",    // Audit log viewer
-    "2fa-setup",    // Two-factor authentication
-    "notifications", // Notification center
+    "landing",      // Landing page
+    "fintech",      // Financial analytics & FRED data
+    "dashboard-builder", // Custom dashboard builder
     "export-studio", // Data export studio
-    "documents",    // Document generator
-    "activity",     // Activity feed
-    "gamification", // Gamification system
-    "affiliates",   // Affiliate dashboard
-    // Batch 3: Final Modules
-    "configurator",   // Product configurator
-    "webhooks",       // Webhook manager
-    "editor",         // Rich text editor
-    "media",          // Media library
-    "product-tour",   // Product tour
-    "knowledge-base", // Knowledge base
-    "integrations",   // Integration marketplace
-    "templates"       // Template gallery
+    "notifications", // Notification center
   ],
 
   // UI Configuration
-  theme: "purple",           // Default color scheme
-  isCatalog: true,           // Set to true to show module catalog sidebar
-  showAdmin: false,          // Toggle admin features on/off
+  theme: "blue",             // Financial blue theme
+  isCatalog: false,          // Dashboard mode, not catalog
+  showAdmin: true,           // Admin features for data management
 
   // Social & SEO
   links: {
-    github: "https://github.com/yourusername/nexus",
-    docs: "https://docs.nexus.example.com",
+    github: "https://github.com/yourusername/finance-dashboard",
+    docs: "https://fred.stlouisfed.org/docs/api/",
   },
 };
 
