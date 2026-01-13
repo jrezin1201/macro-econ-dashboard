@@ -123,7 +123,7 @@ export default function AnalysisPage() {
           </label>
           <select
             value={calculation}
-            onChange={(e) => setCalculation(e.target.value as any)}
+            onChange={(e) => setCalculation(e.target.value as "none" | "pct_change" | "diff")}
             className="block w-full rounded-md border-0 bg-white/10 py-2 px-3 text-white focus:bg-white/20 focus:ring-2 focus:ring-blue-500"
           >
             <option value="none" className="bg-gray-900">Original Values</option>

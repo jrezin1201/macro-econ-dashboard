@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useFredSeries, POPULAR_SERIES } from "@/modules/fred-api";
 
 // Calculate correlation between two datasets

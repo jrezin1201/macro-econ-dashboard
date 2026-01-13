@@ -1,0 +1,221 @@
+/**
+ * Macro Regime Dashboard
+ *
+ * Analyzes macro indicators to determine market regime and generate portfolio guidance
+ */
+
+import { getSeriesData } from "@/modules/fred-api/lib/fred-client";
+import type { TimeSeriesDataPoint } from "@/lib/macro/types";
+import { MACRO_SERIES, LOOKBACKS } from "@/lib/macro/config";
+import {
+  lastValue,
+  delta,
+  yoyChange,
+  zScore,
+  calculateGrowthComposite,
+  calculateInflationComposite,
+  calculateCreditStressComposite,
+  calculateLiquidityComposite,
+  calculateUSDImpulse,
+  classifyRegime,
+} from "@/lib/macro/calc";
+import { runRulesEngine } from "@/lib/macro/rules";
+import type { MacroRegimeData, MacroIndicator, MacroComposites } from "@/lib/macro/types";
+import { MacroRegimeDashboard } from "./MacroRegimeDashboard";
+
+/**
+ * Fetch all required FRED series
+ */
+async function fetchMacroData(): Promise<MacroRegimeData> {
+  const fiveYearsAgo = new Date();
+  fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
+  const startDate = fiveYearsAgo.toISOString().split("T")[0];
+
+  // Fetch all series (gracefully handle failures)
+  const fetchSeries = async (id: string): Promise<TimeSeriesDataPoint[]> => {
+    try {
+      return await getSeriesData(id, { observationStart: startDate });
+    } catch (error) {
+      console.warn(`Failed to fetch ${id}:`, error);
+      return [];
+    }
+  };
+
+  // Fetch all required series
+  const [
+    fedfunds,
+    dgs2,
+    dgs10,
+    sentiment,
+    indpro,
+    payems,
+    icsa,
+    cpi,
+    pce,
+    breakeven,
+    hyOAS,
+    stlFSI,
+    walcl,
+    wresbal,
+    rrpontsyd,
+    wtregen,
+    dtwexbgs,
+    vix,
+    sp500,
+  ] = await Promise.all([
+    fetchSeries("FEDFUNDS"),
+    fetchSeries("DGS2"),
+    fetchSeries("DGS10"),
+    fetchSeries("UMCSENT"),
+    fetchSeries("INDPRO"),
+    fetchSeries("PAYEMS"),
+    fetchSeries("ICSA"),
+    fetchSeries("CPILFESL"),
+    fetchSeries("PCEPILFE"),
+    fetchSeries("T5YIE"),
+    fetchSeries("BAMLH0A0HYM2"),
+    fetchSeries("STLFSI4"),
+    fetchSeries("WALCL"),
+    fetchSeries("WRESBAL"),
+    fetchSeries("RRPONTSYD"),
+    fetchSeries("WTREGEN"),
+    fetchSeries("DTWEXBGS"),
+    fetchSeries("VIXCLS"),
+    fetchSeries("SP500"),
+  ]);
+
+  // Calculate composites
+  const composites: MacroComposites = {
+    growth: calculateGrowthComposite({ napm: sentiment, indpro, payems, icsa }),
+    inflation: calculateInflationComposite({ cpi, pce, breakeven }),
+    creditStress: calculateCreditStressComposite({ hyOAS, stlFSI }),
+    liquidityImpulse: calculateLiquidityComposite({ walcl, wresbal, wtregen, rrpontsyd }),
+    usdImpulse: calculateUSDImpulse({ dtwexbgs }),
+  };
+
+  // Calculate key metrics
+  const fedfundsVal = lastValue(fedfunds);
+  const dgs2Val = lastValue(dgs2);
+  const dgs10Val = lastValue(dgs10);
+  const curve10_2 = dgs10Val !== null && dgs2Val !== null ? dgs10Val - dgs2Val : null;
+
+  const hyOASVal = lastValue(hyOAS);
+  const hyOAS_8wChange = delta(hyOAS, LOOKBACKS["8w"]);
+  const stlFSIVal = lastValue(stlFSI);
+
+  const walcl_13wChange = delta(walcl, LOOKBACKS["13w"]);
+
+  // Classify regime
+  const regime = classifyRegime(composites, {
+    curve10_2,
+    vix: lastValue(vix),
+  });
+
+  // Run rules engine
+  const { alert, tilts } = runRulesEngine({
+    composites,
+    rates: {
+      fedfunds: fedfundsVal,
+      dgs2: dgs2Val,
+      dgs10: dgs10Val,
+      curve10_2,
+    },
+    credit: {
+      hyOAS: hyOASVal,
+      hyOAS_8wChange,
+      stlFSI: stlFSIVal,
+    },
+  });
+
+  // Build indicator table
+  const indicators: MacroIndicator[] = MACRO_SERIES.map((config) => {
+    let data: TimeSeriesDataPoint[] = [];
+
+    // Map series ID to fetched data
+    const seriesMap: Record<string, TimeSeriesDataPoint[]> = {
+      FEDFUNDS: fedfunds,
+      DGS2: dgs2,
+      DGS10: dgs10,
+      UMCSENT: sentiment,
+      INDPRO: indpro,
+      PAYEMS: payems,
+      ICSA: icsa,
+      CPILFESL: cpi,
+      PCEPILFE: pce,
+      T5YIE: breakeven,
+      BAMLH0A0HYM2: hyOAS,
+      STLFSI4: stlFSI,
+      WALCL: walcl,
+      WRESBAL: wresbal,
+      RRPONTSYD: rrpontsyd,
+      WTREGEN: wtregen,
+      DTWEXBGS: dtwexbgs,
+      VIXCLS: vix,
+      SP500: sp500,
+    };
+
+    data = seriesMap[config.id] || [];
+
+    const latest = lastValue(data);
+    const delta1m = delta(data, LOOKBACKS["1m"]);
+    const delta3m = delta(data, LOOKBACKS["3m"]);
+    const yoy = config.transform === "yoy" || config.category === "inflation" || config.category === "growth"
+      ? yoyChange(data)
+      : null;
+    const z = zScore(data, LOOKBACKS["2y"]);
+
+    // Determine status (simplified)
+    let status: MacroIndicator["status"] = "neutral";
+    if (z !== null) {
+      if (Math.abs(z) > 2) status = "red";
+      else if (Math.abs(z) > 1) status = "yellow";
+      else status = "green";
+    }
+
+    return {
+      seriesId: config.id,
+      name: config.name,
+      category: config.category,
+      latest,
+      delta1m,
+      delta3m,
+      yoy,
+      zScore: z,
+      status,
+      units: config.units,
+    };
+  });
+
+  return {
+    regime,
+    alert,
+    tilts,
+    composites,
+    indicators,
+    lastUpdated: new Date(),
+    rates: {
+      fedfunds: fedfundsVal,
+      dgs2: dgs2Val,
+      dgs10: dgs10Val,
+      curve10_2,
+    },
+    credit: {
+      hyOAS: hyOASVal,
+      hyOAS_8wChange,
+      stlFSI: stlFSIVal,
+    },
+    liquidity: {
+      composite: composites.liquidityImpulse,
+      walcl_13wChange,
+    },
+  };
+}
+
+/**
+ * Main Page Component (Server Component)
+ */
+export default async function MacroRegimePage() {
+  const data = await fetchMacroData();
+
+  return <MacroRegimeDashboard data={data} />;
+}

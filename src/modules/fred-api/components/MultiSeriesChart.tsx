@@ -76,7 +76,7 @@ export function MultiSeriesChart({
   }
 
   // Combine all series data by date
-  const dataMap = new Map<string, any>();
+  const dataMap = new Map<string, Record<string, number | string | Date>>();
 
   seriesData.forEach(({ config, data }) => {
     if (!data) return;
@@ -95,7 +95,7 @@ export function MultiSeriesChart({
   });
 
   let chartData = Array.from(dataMap.values()).sort(
-    (a, b) => a.date.getTime() - b.date.getTime()
+    (a, b) => (a.date as Date).getTime() - (b.date as Date).getTime()
   );
 
   // Normalize if requested
@@ -103,14 +103,15 @@ export function MultiSeriesChart({
     const baseValues: Record<string, number> = {};
     series.forEach((s) => {
       const firstValue = chartData.find((d) => d[s.id] !== undefined)?.[s.id];
-      if (firstValue) baseValues[s.id] = firstValue;
+      if (typeof firstValue === 'number') baseValues[s.id] = firstValue;
     });
 
     chartData = chartData.map((point) => {
-      const normalized: any = { ...point };
+      const normalized: Record<string, number | string | Date> = { ...point };
       series.forEach((s) => {
-        if (point[s.id] !== undefined && baseValues[s.id]) {
-          normalized[s.id] = ((point[s.id] - baseValues[s.id]) / baseValues[s.id]) * 100;
+        const value = point[s.id];
+        if (typeof value === 'number' && baseValues[s.id]) {
+          normalized[s.id] = ((value - baseValues[s.id]) / baseValues[s.id]) * 100;
         }
       });
       return normalized;
@@ -155,12 +156,12 @@ export function MultiSeriesChart({
               borderRadius: "8px",
             }}
             labelStyle={{ color: "rgba(255,255,255,0.9)" }}
-            formatter={(value: number | undefined, name: string) => {
+            formatter={(value: number | undefined, name: string | undefined) => {
               if (value === undefined) return "";
               const seriesConfig = series.find((s) => s.id === name);
               return [
                 normalize ? `${value.toFixed(2)}%` : value.toFixed(2),
-                seriesConfig?.name || name,
+                seriesConfig?.name || name || "",
               ];
             }}
             labelFormatter={(label, payload) =>

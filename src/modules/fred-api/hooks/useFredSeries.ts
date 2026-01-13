@@ -75,7 +75,7 @@ export function useFredSeries(
 
         if (!cancelled) {
           // Parse date strings back to Date objects
-          const parsedData = result.data.map((point: any) => ({
+          const parsedData = result.data.map((point: { date: string; value: number; dateString: string }) => ({
             ...point,
             date: new Date(point.date),
           }));

@@ -13,7 +13,7 @@ export default function IndiaMacroPage() {
       <div className="text-center">
         <h1 className="text-4xl font-bold text-white mb-4">🇮🇳 India Macro</h1>
         <p className="text-xl text-white/60">
-          The world's fastest-growing major economy
+          The world&apos;s fastest-growing major economy
         </p>
       </div>
 
@@ -118,7 +118,7 @@ export default function IndiaMacroPage() {
           <li className="flex items-start gap-2">
             <span className="text-orange-400 mt-1">•</span>
             <span>
-              <strong>Demographic Dividend:</strong> India has the world's largest young
+              <strong>Demographic Dividend:</strong> India has the world&apos;s largest young
               population, providing a massive workforce and consumer base.
             </span>
           </li>

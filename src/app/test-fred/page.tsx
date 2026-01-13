@@ -2,9 +2,14 @@
 
 import { useState, useEffect } from "react";
 
+interface FredApiResponse {
+  count: number;
+  [key: string]: unknown;
+}
+
 export default function TestPage() {
   const [testResult, setTestResult] = useState("Not started");
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<FredApiResponse | null>(null);
 
   useEffect(() => {
     async function testFetch() {

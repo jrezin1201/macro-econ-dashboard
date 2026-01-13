@@ -24,7 +24,7 @@ export default function BitcoinPage() {
       <div className="text-center">
         <h1 className="text-4xl font-bold text-white mb-4">₿ Bitcoin</h1>
         <p className="text-xl text-white/60">
-          Digital gold and the world's first cryptocurrency
+          Digital gold and the world&apos;s first cryptocurrency
         </p>
       </div>
 
@@ -110,7 +110,7 @@ export default function BitcoinPage() {
           <div className="bg-white/5 backdrop-blur-sm rounded-lg p-6 border border-white/10">
             <h3 className="text-lg font-semibold text-white mb-3">vs Gold</h3>
             <p className="text-sm text-white/60">
-              Bitcoin is often called "digital gold" as a store of value, but with higher
+              Bitcoin is often called &ldquo;digital gold&rdquo; as a store of value, but with higher
               volatility and 24/7 trading.
             </p>
           </div>

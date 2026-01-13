@@ -22,8 +22,15 @@ const navigation = [
 ];
 
 const macroNavigation = [
-  { name: "Global Macro", href: "/macro/global", icon: GlobeAltIcon },
+  { name: "Macro Regime", href: "/macro/regime", icon: BeakerIcon },
+  { name: "Equity Breadth", href: "/macro/breadth", icon: ChartBarIcon },
+  { name: "Credit Microstress", href: "/macro/microstress", icon: BeakerIcon },
+  { name: "Bitcoin Analysis", href: "/bitcoin", icon: CurrencyDollarIcon },
   { name: "U.S. Macro", href: "/macro/us", icon: HomeIcon },
+];
+
+const devTabsNavigation = [
+  { name: "Global Macro", href: "/macro/global", icon: GlobeAltIcon },
   { name: "China Macro", href: "/macro/china", icon: GlobeAltIcon },
   { name: "India Macro", href: "/macro/india", icon: GlobeAltIcon },
   { name: "Europe Macro", href: "/macro/europe", icon: GlobeAltIcon },
@@ -35,6 +42,7 @@ const macroNavigation = [
 export function Sidebar() {
   const pathname = usePathname();
   const [macroExpanded, setMacroExpanded] = useState(true);
+  const [devTabsExpanded, setDevTabsExpanded] = useState(false);
 
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col">
@@ -100,6 +108,54 @@ export function Sidebar() {
               {macroExpanded && (
                 <ul role="list" className="-mx-2 mt-2 space-y-1">
                   {macroNavigation.map((item) => {
+                    const isActive = pathname === item.href;
+                    return (
+                      <li key={item.name}>
+                        <Link
+                          href={item.href}
+                          className={`
+                            group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all
+                            ${
+                              isActive
+                                ? "bg-blue-600 text-white"
+                                : "text-gray-300 hover:text-white hover:bg-white/10"
+                            }
+                          `}
+                        >
+                          <item.icon
+                            className={`h-6 w-6 shrink-0 ${
+                              isActive ? "text-white" : "text-gray-400 group-hover:text-white"
+                            }`}
+                            aria-hidden="true"
+                          />
+                          {item.name}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </li>
+
+            {/* Dev Tabs Section */}
+            <li>
+              <button
+                onClick={() => setDevTabsExpanded(!devTabsExpanded)}
+                className="flex items-center justify-between w-full text-xs font-semibold leading-6 text-gray-400 hover:text-white"
+              >
+                Dev Tabs
+                <svg
+                  className={`h-5 w-5 transition-transform ${devTabsExpanded ? "rotate-90" : ""}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+              {devTabsExpanded && (
+                <ul role="list" className="-mx-2 mt-2 space-y-1">
+                  {devTabsNavigation.map((item) => {
                     const isActive = pathname === item.href;
                     return (
                       <li key={item.name}>

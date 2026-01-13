@@ -1,7 +1,7 @@
 /**
- * Finance Dashboard - Main Page
+ * Macro Regime Dashboard - Enhanced with Breadth, Bitcoin, and Microstress
  *
- * Now displays the Macro Regime Analysis dashboard
+ * Analyzes macro indicators to determine market regime and generate portfolio guidance
  */
 
 import { getSeriesData } from "@/modules/fred-api/lib/fred-client";
@@ -37,13 +37,12 @@ import { getMicrostressSeriesId } from "@/lib/macro/microstressConfig";
 import { getPortfolio, computeLayerWeights, computeDeltaFromTargets } from "@/lib/portfolio/portfolioStore";
 import { getActionPolicy } from "@/lib/portfolio/actionPolicy";
 
-import { MacroRegimeDashboard } from "@/app/macro/regime/MacroRegimeDashboard-enhanced";
+import { MacroRegimeDashboard } from "./MacroRegimeDashboard-enhanced";
 
 /**
  * Fetch all required FRED series + confirmation layers
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function fetchMacroData(): Promise<any> {
+async function fetchMacroData() {
   const fiveYearsAgo = new Date();
   fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
   const startDate = fiveYearsAgo.toISOString().split("T")[0];
@@ -363,7 +362,7 @@ async function fetchMacroData(): Promise<any> {
 /**
  * Main Page Component (Server Component)
  */
-export default async function DashboardPage() {
+export default async function MacroRegimePage() {
   const data = await fetchMacroData();
 
   return <MacroRegimeDashboard data={data} />;

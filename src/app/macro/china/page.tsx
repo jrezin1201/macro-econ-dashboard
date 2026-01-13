@@ -13,7 +13,7 @@ export default function ChinaMacroPage() {
       <div className="text-center">
         <h1 className="text-4xl font-bold text-white mb-4">🇨🇳 China Macro</h1>
         <p className="text-xl text-white/60">
-          Economic indicators for the world's second-largest economy
+          Economic indicators for the world&apos;s second-largest economy
         </p>
       </div>
 
@@ -64,7 +64,7 @@ export default function ChinaMacroPage() {
         />
         <div className="mt-4 bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
           <p className="text-sm text-blue-300">
-            <strong>Note:</strong> The Chinese Yuan (CNY) is managed by the People's Bank of China
+            <strong>Note:</strong> The Chinese Yuan (CNY) is managed by the People&apos;s Bank of China
             within a trading band. A higher number means a weaker Yuan (more Yuan per Dollar).
           </p>
         </div>
@@ -118,7 +118,7 @@ export default function ChinaMacroPage() {
           <li className="flex items-start gap-2">
             <span className="text-red-400 mt-1">•</span>
             <span>
-              <strong>World's Factory:</strong> China is the world's largest exporter and
+              <strong>World&apos;s Factory:</strong> China is the world&apos;s largest exporter and
               manufacturing hub, making its economy crucial for global supply chains.
             </span>
           </li>

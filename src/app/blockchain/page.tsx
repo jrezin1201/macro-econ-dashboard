@@ -27,7 +27,7 @@ function StatCard({
   title: string;
   value: string | number;
   subtitle?: string;
-  icon?: any;
+  icon?: React.ComponentType<{ className?: string }>;
   color?: string;
   source?: string;
   calculation?: string;

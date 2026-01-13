@@ -126,7 +126,7 @@ export default function EuropeMacroPage() {
 
       {/* Germany */}
       <section>
-        <h2 className="text-2xl font-bold text-white mb-4">Germany (Europe's Largest Economy)</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">Germany (Europe&apos;s Largest Economy)</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <TimeSeriesChart
             seriesId="DEUCPIALLMINMEI"
@@ -153,13 +153,13 @@ export default function EuropeMacroPage() {
             <span className="text-blue-400 mt-1">•</span>
             <span>
               <strong>Eurozone:</strong> 20 countries use the Euro as their currency, creating
-              the world's second-largest economy by GDP.
+              the world&apos;s second-largest economy by GDP.
             </span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-blue-400 mt-1">•</span>
             <span>
-              <strong>Germany:</strong> Europe's largest economy and manufacturing powerhouse,
+              <strong>Germany:</strong> Europe&apos;s largest economy and manufacturing powerhouse,
               particularly strong in automotive and industrial sectors.
             </span>
           </li>
