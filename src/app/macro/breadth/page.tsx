@@ -6,6 +6,10 @@ import { breadthProvider } from "@/lib/market/breadthProvider";
 import { analyzeBreadth } from "@/lib/market/breadthCalc";
 import { getSeriesData } from "@/modules/fred-api/lib/fred-client";
 
+// Force dynamic rendering (no static generation at build time)
+export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // Revalidate every hour
+
 async function fetchBreadthData() {
   const oneYearAgo = new Date();
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
