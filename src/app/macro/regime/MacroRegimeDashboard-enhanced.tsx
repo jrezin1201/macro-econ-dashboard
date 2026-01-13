@@ -6,15 +6,32 @@
  * Macro Regime Dashboard - Enhanced Client Component
  *
  * Displays regime analysis, alerts, portfolio tilts + confirmation layers
+ * Now with Beginner Mode for educational guidance
  */
 
+import { useState } from "react";
 import type { MacroIndicator } from "@/lib/macro/types";
 import { PortfolioImpactPanel } from "./PortfolioImpactPanel";
-import { ThisWeekActionsPanel } from "./ThisWeekActionsPanel";
+import { ThisWeekActionsPlaybook } from "./ThisWeekActionsPlaybook";
 import { ResponsiveIndicatorTable } from "./ResponsiveIndicatorTable";
 import { AccordionSimple } from "@/components/ui/AccordionSimple";
+import { ModeToggle } from "./ModeToggle";
+import { ExplanationSidebar } from "./ExplanationSidebar";
+import { ExplanationBadge } from "./ExplanationBadge";
+import { WhatCouldGoWrong } from "./WhatCouldGoWrong";
+import { TimeHorizonView } from "./TimeHorizonView";
 import type { LayerDelta, LayerWeights } from "@/lib/portfolio/portfolioStore";
 import type { ActionPolicy } from "@/lib/portfolio/actionPolicy";
+import {
+  explainRegime,
+  explainAlertLevel,
+  explainBTCTrend,
+  explainMicrostress,
+  explainBreadth,
+  explainLiquidity,
+  generateRiskScenarios,
+  generateTimeHorizonView,
+} from "@/lib/macro/explanations";
 
 interface Regime {
   regime: string;
@@ -151,6 +168,9 @@ export function MacroRegimeDashboard({ data }: Props) {
     breadth, bitcoin, microstress, portfolio
   } = data;
 
+  // Beginner Mode state
+  const [isBeginnerMode, setIsBeginnerMode] = useState(true);
+
   // Group indicators by category
   const indicatorsByCategory = indicators.reduce((acc: Record<string, MacroIndicator[]>, ind: MacroIndicator) => {
     if (!acc[ind.category]) acc[ind.category] = [];
@@ -158,18 +178,42 @@ export function MacroRegimeDashboard({ data }: Props) {
     return acc;
   }, {} as Record<string, MacroIndicator[]>);
 
+  // Generate explanations and scenarios for beginner mode
+  const riskScenarios = generateRiskScenarios(
+    alert.level,
+    bitcoin?.analysis.trendLevel || "YELLOW",
+    microstress?.level || "YELLOW",
+    liquidity.composite
+  );
+
+  const timeHorizon = generateTimeHorizonView(
+    regime.regime,
+    alert.level,
+    bitcoin?.analysis.trendLevel || "YELLOW",
+    liquidity.composite
+  );
+
   return (
-    <div className="max-w-7xl mx-auto px-3 md:px-6 lg:px-8 space-y-6">
-      {/* Header */}
-      <div className="text-center">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2">Macro Regime Analysis</h1>
-        <p className="text-sm md:text-base text-white/60">
-          Rule-based regime classification + portfolio tilt guidance + confirmation layers
-        </p>
-        <p className="text-white/40 text-xs md:text-sm mt-1">
-          Last updated: {lastUpdated.toLocaleString()}
-        </p>
-      </div>
+    <div className="relative">
+      {/* Explanation Sidebar (Beginner Mode only) */}
+      {isBeginnerMode && <ExplanationSidebar />}
+
+      <div className="max-w-7xl mx-auto px-3 md:px-6 lg:px-8 space-y-6">
+        {/* Header with Mode Toggle */}
+        <div className="text-center">
+          <div className="flex justify-center items-center gap-4 mb-3">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">Macro Regime Analysis</h1>
+          </div>
+          <div className="flex justify-center mb-3">
+            <ModeToggle onChange={setIsBeginnerMode} />
+          </div>
+          <p className="text-sm md:text-base text-white/60">
+            Rule-based regime classification + portfolio tilt guidance + confirmation layers
+          </p>
+          <p className="text-white/40 text-xs md:text-sm mt-1">
+            Last updated: {lastUpdated.toLocaleString()}
+          </p>
+        </div>
 
       {/* Enhanced Summary Cards - Responsive grid with mobile-first design */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-3">
@@ -262,7 +306,29 @@ export function MacroRegimeDashboard({ data }: Props) {
           {/* This Week Actions - Priority #1 on mobile */}
           {portfolio && (
             <div className="lg:hidden">
-              <ThisWeekActionsPanel actionPolicy={portfolio.actionPolicy} />
+              <ThisWeekActionsPlaybook
+                actionPolicy={portfolio.actionPolicy}
+                isBeginnerMode={isBeginnerMode}
+              />
+            </div>
+          )}
+
+          {/* What Could Go Wrong - Beginner Mode only, mobile */}
+          {isBeginnerMode && (
+            <div className="lg:hidden">
+              <WhatCouldGoWrong scenarios={riskScenarios} isBeginnerMode={isBeginnerMode} />
+            </div>
+          )}
+
+          {/* Time Horizon View - Beginner Mode only, mobile */}
+          {isBeginnerMode && (
+            <div className="lg:hidden">
+              <TimeHorizonView
+                sixMonth={timeHorizon.sixMonth}
+                twelveMonth={timeHorizon.twelveMonth}
+                twoToThreeYear={timeHorizon.twoToThreeYear}
+                isBeginnerMode={isBeginnerMode}
+              />
             </div>
           )}
 
@@ -278,6 +344,10 @@ export function MacroRegimeDashboard({ data }: Props) {
                   </li>
                 ))}
               </ul>
+              <ExplanationBadge
+                text={explainBTCTrend(bitcoin.analysis.trendLevel, bitcoin.analysis.metrics.distanceFrom200D)}
+                show={isBeginnerMode}
+              />
             </div>
           )}
 
@@ -291,6 +361,10 @@ export function MacroRegimeDashboard({ data }: Props) {
               <CompositePill label="Liquidity" value={composites.liquidityImpulse} />
               <CompositePill label="USD" value={composites.usdImpulse} />
             </div>
+            <ExplanationBadge
+              text={explainLiquidity(liquidity.composite)}
+              show={isBeginnerMode}
+            />
           </div>
 
           {/* NEW: Confirmation Layers Summary */}
@@ -339,6 +413,19 @@ export function MacroRegimeDashboard({ data }: Props) {
                 </div>
               )}
             </div>
+            {/* Explanations for each confirmation layer */}
+            {breadth && (
+              <ExplanationBadge
+                text={explainBreadth(breadth.signal, breadth.level)}
+                show={isBeginnerMode}
+              />
+            )}
+            {microstress && isBeginnerMode && (
+              <ExplanationBadge
+                text={explainMicrostress(microstress.level)}
+                show={true}
+              />
+            )}
           </div>
 
           {/* NEW: Portfolio Impact Panel */}
@@ -371,7 +458,29 @@ export function MacroRegimeDashboard({ data }: Props) {
           {/* NEW: This Week Actions Panel - Desktop only (mobile shows above) */}
           {portfolio && (
             <div className="hidden lg:block">
-              <ThisWeekActionsPanel actionPolicy={portfolio.actionPolicy} />
+              <ThisWeekActionsPlaybook
+                actionPolicy={portfolio.actionPolicy}
+                isBeginnerMode={isBeginnerMode}
+              />
+            </div>
+          )}
+
+          {/* What Could Go Wrong - Beginner Mode, Desktop */}
+          {isBeginnerMode && (
+            <div className="hidden lg:block">
+              <WhatCouldGoWrong scenarios={riskScenarios} isBeginnerMode={isBeginnerMode} />
+            </div>
+          )}
+
+          {/* Time Horizon View - Beginner Mode, Desktop */}
+          {isBeginnerMode && (
+            <div className="hidden lg:block">
+              <TimeHorizonView
+                sixMonth={timeHorizon.sixMonth}
+                twelveMonth={timeHorizon.twelveMonth}
+                twoToThreeYear={timeHorizon.twoToThreeYear}
+                isBeginnerMode={isBeginnerMode}
+              />
             </div>
           )}
 
@@ -492,6 +601,7 @@ export function MacroRegimeDashboard({ data }: Props) {
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );
