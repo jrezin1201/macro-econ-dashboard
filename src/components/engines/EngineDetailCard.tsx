@@ -10,6 +10,7 @@ import { useState } from "react";
 import type { EngineScore } from "@/lib/engines/engineScoring";
 import { getEngine } from "@/lib/engines/engineConfig";
 import type { EngineId } from "@/lib/portfolio/schema";
+import { EngineTooltip } from "@/components/ui/EngineTooltip";
 
 interface Props {
   engineId: EngineId;
@@ -47,7 +48,9 @@ export function EngineDetailCard({ engineId, score, currentPct, targetPct, delta
         <div className="flex items-center justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h3 className="text-lg font-bold text-white">{engine.label}</h3>
+              <EngineTooltip engineId={engineId}>
+                <h3 className="text-lg font-bold text-white cursor-help">{engine.label}</h3>
+              </EngineTooltip>
               <span
                 className={`px-2 py-0.5 rounded text-xs font-semibold border ${getStanceColor(
                   score.stance

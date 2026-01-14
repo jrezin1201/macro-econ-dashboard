@@ -1,7 +1,7 @@
 /**
- * Economic Engines Configuration
+ * Economic Engines Configuration - UPDATED VERSION
  *
- * Defines the 12 economic engines, their characteristics, examples, and classification rules.
+ * Defines the 12 economic engines with refined beginner-friendly labels and definitions.
  */
 
 import type { EngineId, EngineTargets, Holding, EngineClassification, AssetType } from "@/lib/portfolio/schema";
@@ -10,9 +10,14 @@ import type { CompanyProfile } from "@/lib/company/providers/types";
 export interface Engine {
   id: EngineId;
   label: string;
-  description: string;
-  whatWins: string[]; // 3-5 bullet points explaining what drives returns
-  examples: string[]; // 6-10 example tickers/ETFs (not advice, just examples)
+  shortDefinition: string; // 1 sentence for tooltips
+  longDefinition: string; // 2-4 sentences for detailed view
+  description: string; // Legacy field, kept for compatibility
+  returnMechanism: string[]; // What drives returns (bullets)
+  macroSensitivity: string[]; // When it tends to win (bullets)
+  whatWins: string[]; // Legacy field, kept for compatibility
+  examples: string[]; // 6-10 example tickers/ETFs
+  examplesDisclaimer: string; // Disclaimer that examples are not recommendations
   macroDrivers: {
     helps: string[]; // conditions that favor this engine
     hurts: string[]; // conditions that penalize this engine
@@ -26,8 +31,20 @@ export const engines: Engine[] = [
   {
     id: "VOLATILITY_OPTIONALITY",
     label: "Volatility & Optionality",
+    shortDefinition: "Convex, high-beta exposure that can surge in risk-on liquidity but draws down hard in risk-off.",
+    longDefinition: "This engine captures reflexive, speculative upside—often driven by liquidity, momentum, and narrative. It can outperform massively when conditions are supportive, but it is the first to be cut when stress rises.",
     description:
       "High-beta, convex assets that thrive in liquidity surges and risk-on environments. Think crypto proxies, high-volatility tech, and assets with embedded optionality.",
+    returnMechanism: [
+      "Liquidity-driven multiple expansion and momentum",
+      "Reflexive upside in risk-on environments",
+      "Embedded optionality in volatile, narrative-driven assets",
+      "High beta to speculative flows and animal spirits",
+    ],
+    macroSensitivity: [
+      "Surges when: Fed eases, liquidity injections, BTC bull markets, risk-on sentiment",
+      "Collapses when: Liquidity tightens, credit stress rises, risk-off regime kicks in",
+    ],
     whatWins: [
       "Liquidity injections (Fed easing, QE resumption)",
       "Risk-on sentiment and animal spirits",
@@ -35,6 +52,7 @@ export const engines: Engine[] = [
       "Crypto bull markets and narrative-driven rallies",
     ],
     examples: ["MSTR", "COIN", "ARKK", "TQQQ", "High beta tech"],
+    examplesDisclaimer: "Examples only—not recommendations.",
     macroDrivers: {
       helps: [
         "Liquidity rising (Fed balance sheet expansion)",
@@ -53,8 +71,20 @@ export const engines: Engine[] = [
   {
     id: "GROWTH_DURATION",
     label: "Growth & Duration",
+    shortDefinition: "Long-duration cash flows that benefit from easing inflation/rates and abundant liquidity.",
+    longDefinition: "Think of companies whose value depends heavily on future growth. Lower rates and strong liquidity tend to help, while rising yields and tightening conditions compress multiples.",
     description:
       "Long-duration growth stocks that discount far-future cash flows. Winners in falling rate environments with stable growth expectations.",
+    returnMechanism: [
+      "Present value of distant cash flows rises when rates fall",
+      "Multiple expansion in low-rate, abundant-liquidity regimes",
+      "Secular growth narratives with pricing power",
+      "High earnings growth compounding over time",
+    ],
+    macroSensitivity: [
+      "Wins when: Rates fall, liquidity abundant, inflation moderating, growth stable",
+      "Struggles when: Rates spike, inflation surges, liquidity tightens, growth slows",
+    ],
     whatWins: [
       "Falling interest rates (especially real rates)",
       "Stable or rising growth expectations",
@@ -62,6 +92,7 @@ export const engines: Engine[] = [
       "Strong earnings momentum and secular growth narratives",
     ],
     examples: ["QQQM", "MSFT", "NVDA", "AMZN", "GOOGL", "META", "TSM"],
+    examplesDisclaimer: "Examples only—not recommendations.",
     macroDrivers: {
       helps: [
         "Rates falling",
@@ -80,8 +111,20 @@ export const engines: Engine[] = [
   {
     id: "CASHFLOW_COMPOUNDERS",
     label: "Cashflow Compounders",
+    shortDefinition: "High-quality businesses that steadily compound earnings and return capital across cycles.",
+    longDefinition: "This engine wins through durability: pricing power, stable demand, strong balance sheets, and disciplined reinvestment/buybacks. Often a core allocation in uncertain regimes.",
     description:
       "High-quality businesses with durable competitive advantages, strong free cash flow, and resilient margins across cycles.",
+    returnMechanism: [
+      "Consistent free cash flow generation through economic cycles",
+      "Pricing power that protects margins during inflation",
+      "Capital discipline through buybacks, dividends, and smart reinvestment",
+      "Low operational leverage to macro volatility",
+    ],
+    macroSensitivity: [
+      "Wins when: Macro stable, inflation moderate (if they have pricing power), risk-off (defensive bid)",
+      "Struggles when: Severe recession, deflationary collapse, disruption to business model",
+    ],
     whatWins: [
       "Pricing power and brand strength",
       "Consistent FCF generation through cycles",
@@ -89,6 +132,7 @@ export const engines: Engine[] = [
       "Low operational leverage to macro swings",
     ],
     examples: ["BRK.B", "PG", "KO", "UNH", "JNJ", "AAPL", "V", "MA"],
+    examplesDisclaimer: "Examples only—not recommendations.",
     macroDrivers: {
       helps: [
         "Stable macro (no extreme moves)",
@@ -101,8 +145,20 @@ export const engines: Engine[] = [
   {
     id: "CREDIT_CARRY",
     label: "Credit & Carry",
+    shortDefinition: "Yield-driven returns where you get paid to hold high-quality short-duration credit/cash-like assets.",
+    longDefinition: "This engine focuses on collecting yield with lower volatility. It tends to perform best when credit conditions are stable and stress is low.",
     description:
       "Short-duration bonds, money market funds, and credit instruments that capture yield with minimal duration risk.",
+    returnMechanism: [
+      "Collect yield from elevated short-term rates (Fed funds high)",
+      "Benefit from inverted yield curve (short rates > long rates)",
+      "Minimal duration risk when rates are volatile",
+      "Safe haven flows during uncertainty",
+    ],
+    macroSensitivity: [
+      "Wins when: Fed funds elevated, credit stress low, curve inverted, uncertainty high",
+      "Struggles when: Fed cutting aggressively, credit spreads blowing out, inflation eroding real returns",
+    ],
     whatWins: [
       "High nominal policy rates (Fed funds elevated)",
       "Stable or tightening credit spreads",
@@ -110,6 +166,7 @@ export const engines: Engine[] = [
       "Safe haven flows during uncertainty",
     ],
     examples: ["SGOV", "BIL", "SHY", "JPST", "VMFXX", "Cash"],
+    examplesDisclaimer: "Examples only—not recommendations.",
     macroDrivers: {
       helps: [
         "High Fed funds rate",
@@ -127,8 +184,20 @@ export const engines: Engine[] = [
   {
     id: "ENERGY_COMMODITIES",
     label: "Energy & Commodities",
+    shortDefinition: "Inflation and supply-shock exposure through energy and broad commodities.",
+    longDefinition: "This engine benefits from rising inflation expectations, supply constraints, or geopolitical shocks. It can also diversify equity-heavy portfolios when inflation is the dominant macro risk.",
     description:
       "Energy producers and commodity exposure that benefit from inflation, supply constraints, or geopolitical risk premia.",
+    returnMechanism: [
+      "Rising oil/commodity prices from supply shocks or demand surges",
+      "Inflation hedge as commodity prices rise",
+      "Geopolitical risk premia (war, sanctions, OPEC actions)",
+      "Weak USD tailwind (commodities priced in dollars)",
+    ],
+    macroSensitivity: [
+      "Wins when: Inflation rising, USD falling, geopolitical tensions high, supply constraints",
+      "Struggles when: Recession (demand collapse), USD surging, supply gluts, deflation",
+    ],
     whatWins: [
       "Rising oil prices (supply shocks, demand surges)",
       "Inflation expectations climbing",
@@ -136,6 +205,7 @@ export const engines: Engine[] = [
       "Weak USD (commodities priced in dollars)",
     ],
     examples: ["XOM", "CVX", "XLE", "DBC", "USO"],
+    examplesDisclaimer: "Examples only—not recommendations.",
     macroDrivers: {
       helps: [
         "Inflation rising",
@@ -154,8 +224,20 @@ export const engines: Engine[] = [
   {
     id: "GOLD_SCARCITY",
     label: "Gold & Scarcity",
+    shortDefinition: "A monetary confidence and real-rate hedge—especially when debt/inflation risks rise.",
+    longDefinition: "Gold often responds to real yields, currency confidence, and systemic risk. It can act as ballast when traditional assets struggle under inflation or credit stress.",
     description:
       "Monetary metals and scarcity assets that serve as stores of value, inflation hedges, and crisis insurance.",
+    returnMechanism: [
+      "Negative real rates (nominal rates < inflation)",
+      "Central bank debasement and currency confidence issues",
+      "Geopolitical instability and crisis insurance demand",
+      "Portfolio diversification when correlations break down",
+    ],
+    macroSensitivity: [
+      "Wins when: Real rates negative, inflation high, USD weakening, geopolitical crisis",
+      "Struggles when: Real rates rising sharply, USD strengthening, deflationary environment",
+    ],
     whatWins: [
       "Negative real rates (nominal rates < inflation)",
       "Central bank debasement fears",
@@ -163,6 +245,7 @@ export const engines: Engine[] = [
       "Loss of confidence in fiat currencies",
     ],
     examples: ["GLD", "IAU", "Physical gold"],
+    examplesDisclaimer: "Examples only—not recommendations.",
     macroDrivers: {
       helps: [
         "Real rates negative",
@@ -180,8 +263,20 @@ export const engines: Engine[] = [
   {
     id: "REAL_ESTATE_RENT",
     label: "Real Estate & Rent",
+    shortDefinition: "Contractual cashflows tied to physical assets (rents/leases), not home-price speculation.",
+    longDefinition: "This engine captures income streams backed by real assets. It is sensitive to financing costs and liquidity, but can diversify equity exposure when structured for cashflow.",
     description:
       "REITs and real estate proxies that generate income from rent and benefit from replacement cost dynamics and scarcity.",
+    returnMechanism: [
+      "Rental income from long-term leases and pricing power",
+      "Cap rate compression when long-term rates fall",
+      "Replacement cost dynamics (inflation raises rebuild costs)",
+      "Supply constraints in prime locations",
+    ],
+    macroSensitivity: [
+      "Wins when: Long rates falling, inflation moderate, strong rental demand",
+      "Struggles when: Long rates spiking, recession (rent defaults), oversupply",
+    ],
     whatWins: [
       "Falling long-term rates (cap rate compression)",
       "Strong rental demand and pricing power",
@@ -189,6 +284,7 @@ export const engines: Engine[] = [
       "Inflation (replacement cost rises)",
     ],
     examples: ["VNQ", "O", "DLR", "PLD", "EQIX"],
+    examplesDisclaimer: "Examples only—not recommendations.",
     macroDrivers: {
       helps: [
         "Long rates falling",
@@ -205,8 +301,20 @@ export const engines: Engine[] = [
   {
     id: "DEFENSE_GEOPOLITICS",
     label: "Defense & Geopolitics",
+    shortDefinition: "Security and defense spending exposure that can benefit from elevated geopolitical risk.",
+    longDefinition: "This engine tends to be less cyclical than broad industrials and can act as a hedge in unstable geopolitical environments.",
     description:
       "Defense contractors and geopolitical beneficiaries that profit from rising global tensions and military spending.",
+    returnMechanism: [
+      "Rising defense budgets from geopolitical tensions",
+      "Multi-year procurement cycles with sticky revenue",
+      "Bipartisan political support for defense spending",
+      "Less cyclical than general industrials",
+    ],
+    macroSensitivity: [
+      "Wins when: War or rising tensions, bipartisan defense spending increases, NATO expansion",
+      "Struggles when: Peace dividend, budget cuts, isolationist shifts",
+    ],
     whatWins: [
       "Rising defense budgets (war, cold war 2.0)",
       "Geopolitical fragmentation (US/China/Russia)",
@@ -214,6 +322,7 @@ export const engines: Engine[] = [
       "Bipartisan political support for defense",
     ],
     examples: ["RTX", "LMT", "NOC", "GD", "ITA"],
+    examplesDisclaimer: "Examples only—not recommendations.",
     macroDrivers: {
       helps: [
         "War or rising tensions",
@@ -226,8 +335,20 @@ export const engines: Engine[] = [
   {
     id: "INFRASTRUCTURE_CAPEX",
     label: "Infrastructure & Capex",
+    shortDefinition: "Multi-year investment cycles in power, grid, industrial buildout, and physical infrastructure.",
+    longDefinition: "This engine benefits from long-cycle spending programs, reshoring, electrification, and capex booms. It can perform well even when growth is moderate if capex is persistent.",
     description:
       "Electrification, grid buildout, and capital equipment plays that benefit from secular infrastructure investment cycles.",
+    returnMechanism: [
+      "Government stimulus programs (IIJA, IRA, CHIPS Act)",
+      "Electrification megatrend (data centers, EVs, grid modernization)",
+      "Reshoring and manufacturing renaissance",
+      "Multi-year capex cycles with pricing power",
+    ],
+    macroSensitivity: [
+      "Wins when: Fiscal stimulus, electrification demand rising, reshoring trends, inflation (pricing power)",
+      "Struggles when: Severe recession, budget austerity, deflation",
+    ],
     whatWins: [
       "Government stimulus (IIJA, IRA, CHIPS Act)",
       "Electrification megatrend (data centers, EVs, grid)",
@@ -235,6 +356,7 @@ export const engines: Engine[] = [
       "Multi-year capex cycles (utilities, industrials)",
     ],
     examples: ["ETN", "PWR", "CAT", "EMR", "PAVE"],
+    examplesDisclaimer: "Examples only—not recommendations.",
     macroDrivers: {
       helps: [
         "Fiscal stimulus",
@@ -247,9 +369,21 @@ export const engines: Engine[] = [
   },
   {
     id: "SMALL_CAPS_DOMESTIC",
-    label: "Small Caps & Domestic",
+    label: "Small Caps & Domestic Cyclicals",
+    shortDefinition: "Early-cycle/recovery amplifier with high operating leverage to domestic growth.",
+    longDefinition: "Small caps tend to outperform when growth re-accelerates and financial conditions ease. They usually struggle when credit tightens or recession risk rises.",
     description:
       "Domestically-focused small-cap companies that benefit from US economic strength and are less exposed to global headwinds.",
+    returnMechanism: [
+      "Operating leverage to US domestic growth",
+      "Credit-sensitive (benefit when credit spreads tight)",
+      "Early-cycle recovery amplifier",
+      "Breadth expansion in risk-on environments",
+    ],
+    macroSensitivity: [
+      "Wins when: US growth strong, credit available, breadth expanding, risk-on sentiment",
+      "Struggles when: Credit stress, recession, large-cap outperformance, breadth diverging",
+    ],
     whatWins: [
       "Strong US domestic growth",
       "USD stability or weakness (reduces competitiveness gap)",
@@ -257,6 +391,7 @@ export const engines: Engine[] = [
       "Risk-on sentiment and breadth expansion",
     ],
     examples: ["IWM", "IJR", "VB"],
+    examplesDisclaimer: "Examples only—not recommendations.",
     macroDrivers: {
       helps: [
         "US growth strong",
@@ -274,9 +409,21 @@ export const engines: Engine[] = [
   },
   {
     id: "INTERNATIONAL_FX_EM",
-    label: "International & EM",
+    label: "International & FX/EM Beta",
+    shortDefinition: "Non-US growth and currency sensitivity—often helped by a weakening USD and improving global cycle.",
+    longDefinition: "This engine is driven by global growth differentials and currency moves. It tends to do better when the dollar weakens and global liquidity improves.",
     description:
       "International and emerging market equities that benefit from global growth, weak USD, and diversification outside the US.",
+    returnMechanism: [
+      "Weak USD makes EM assets cheaper for USD investors",
+      "Strong global growth (especially China, EM Asia)",
+      "Commodity bull markets (many EMs are commodity exporters)",
+      "Diversification away from US concentration risk",
+    ],
+    macroSensitivity: [
+      "Wins when: USD falling, global growth rising, commodities rising, China stimulus",
+      "Struggles when: USD surging, global recession, China slowdown, trade wars",
+    ],
     whatWins: [
       "Weak USD (makes EM assets cheaper for USD investors)",
       "Strong global growth (especially China, EM Asia)",
@@ -284,6 +431,7 @@ export const engines: Engine[] = [
       "Diversification away from US concentration risk",
     ],
     examples: ["VXUS", "EEM", "VWO", "IEMG"],
+    examplesDisclaimer: "Examples only—not recommendations.",
     macroDrivers: {
       helps: [
         "USD falling",
@@ -302,8 +450,20 @@ export const engines: Engine[] = [
   {
     id: "SPECIAL_SITUATIONS",
     label: "Special Situations",
+    shortDefinition: "Idiosyncratic opportunities (spinoffs, restructurings, event-driven) with low correlation to macro—when chosen carefully.",
+    longDefinition: "This engine is intentionally manual. It can add uncorrelated returns but requires judgment, catalysts, and position sizing discipline.",
     description:
       "Event-driven opportunities like spinoffs, mergers, restructurings, and arbitrage plays that are less correlated to macro.",
+    returnMechanism: [
+      "Corporate catalysts independent of macro (spinoffs, activist campaigns)",
+      "Mispricing from forced selling or complexity",
+      "Arbitrage spreads in M&A or capital structure",
+      "Idiosyncratic opportunities with unique catalysts",
+    ],
+    macroSensitivity: [
+      "Wins when: M&A activity high, corporate restructuring wave, market inefficiency",
+      "Struggles when: Severe market stress (correlations → 1), credit markets frozen",
+    ],
     whatWins: [
       "Corporate actions (spinoffs, activist campaigns)",
       "Mispricing from forced selling or complexity",
@@ -311,6 +471,7 @@ export const engines: Engine[] = [
       "Arbitrage spreads in M&A or capital structure",
     ],
     examples: ["Manual basket", "Event-driven ETFs", "Spinoffs"],
+    examplesDisclaimer: "Examples only—not recommendations.",
     macroDrivers: {
       helps: [
         "M&A activity high",

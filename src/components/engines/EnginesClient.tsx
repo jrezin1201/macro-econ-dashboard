@@ -14,6 +14,7 @@ import { EngineDetailCard } from "@/components/engines/EngineDetailCard";
 import { EngineScoresChart } from "@/components/engines/EngineScoresChart";
 import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import { RefreshIndicator } from "@/components/common/RefreshIndicator";
+import { EngineTooltip } from "@/components/ui/EngineTooltip";
 import type { Portfolio } from "@/lib/portfolio/schema";
 import type { ScoringResult, EngineScore, MacroCase } from "@/lib/engines/engineScoring";
 
@@ -166,7 +167,11 @@ export function EnginesClient() {
                 return score?.stance === "OVERWEIGHT" && delta?.status === "UNDER";
               })
               .map((engine) => (
-                <li key={engine.id}>{engine.label}</li>
+                <li key={engine.id}>
+                  <EngineTooltip engineId={engine.id}>
+                    <span className="cursor-help">{engine.label}</span>
+                  </EngineTooltip>
+                </li>
               ))}
           </ul>
           {engines.filter((e) => {
@@ -191,7 +196,11 @@ export function EnginesClient() {
               })
               .slice(0, 5)
               .map((engine) => (
-                <li key={engine.id}>{engine.label}</li>
+                <li key={engine.id}>
+                  <EngineTooltip engineId={engine.id}>
+                    <span className="cursor-help">{engine.label}</span>
+                  </EngineTooltip>
+                </li>
               ))}
           </ul>
         </div>
@@ -215,10 +224,14 @@ export function EnginesClient() {
                 const score = getEngineScore(engine.id);
                 return (
                   <li key={engine.id}>
-                    {engine.label}
-                    {score?.status === "GATED" && (
-                      <span className="text-xs ml-1">(gated)</span>
-                    )}
+                    <EngineTooltip engineId={engine.id}>
+                      <span className="cursor-help">
+                        {engine.label}
+                        {score?.status === "GATED" && (
+                          <span className="text-xs ml-1">(gated)</span>
+                        )}
+                      </span>
+                    </EngineTooltip>
                   </li>
                 );
               })}

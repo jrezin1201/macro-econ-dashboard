@@ -9,6 +9,7 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
 import type { EngineId } from "@/lib/portfolio/schema";
 import { getEngine } from "@/lib/engines/engineConfig";
+import { EngineTooltip } from "@/components/ui/EngineTooltip";
 
 interface AllocationData {
   engine: EngineId;
@@ -113,7 +114,9 @@ export function PortfolioAllocationChart({ allocations }: Props) {
                 className="w-3 h-3 rounded"
                 style={{ backgroundColor: ENGINE_COLORS[item.engine] }}
               />
-              <span className="text-white/80">{item.name}</span>
+              <EngineTooltip engineId={item.engine}>
+                <span className="text-white/80 cursor-help">{item.name}</span>
+              </EngineTooltip>
             </div>
             <span className="text-white font-semibold">{item.value.toFixed(1)}%</span>
           </div>

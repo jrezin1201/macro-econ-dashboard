@@ -9,6 +9,7 @@
 import { useState } from "react";
 import { TableOfContents } from "@/components/guide/TableOfContents";
 import { IndicatorExplainer } from "@/components/guide/IndicatorExplainer";
+import { EnginesExplainer } from "@/components/engines/EnginesExplainer";
 
 export function GuideContent() {
   // Initialize print mode from URL params (lazy initializer)
@@ -659,42 +660,10 @@ export function GuideContent() {
               {/* 12 Economic Engines */}
               <div id="engine-classification" className="mb-8 scroll-mt-20">
                 <h3 className={`text-xl font-semibold mb-4 ${isPrintMode ? "text-black" : "text-white"}`}>
-                  The 12 Economic Engines
+                  Economic Engines: Why We Use Them
                 </h3>
-                <div className={`rounded-lg border ${isPrintMode ? "bg-gray-50 border-gray-300" : "bg-white/5 border-white/10"} p-6 space-y-4`}>
-                  <p className={`text-sm ${isPrintMode ? "text-gray-700" : "text-white/70"}`}>
-                    Every holding in your portfolio is classified by its primary economic driver.
-                    These 12 engines represent distinct return sources that respond differently to macro conditions.
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {[
-                      { name: "Quality Factor", examples: "AAPL, MSFT, UNH", driver: "Moats, pricing power, cash flow" },
-                      { name: "Growth Duration", examples: "NVDA, TSLA, AMZN", driver: "Revenue growth, future earnings" },
-                      { name: "Volatility/Optionality", examples: "BTC, COIN, MSTR", driver: "Speculation, asymmetric upside" },
-                      { name: "Defensive", examples: "PG, KO, WMT", driver: "Stability, dividends, recession-proof" },
-                      { name: "Cyclical Value", examples: "XOM, CAT, JPM", driver: "Economic reacceleration" },
-                      { name: "AI/Tech Infrastructure", examples: "NVDA, SMCI, TSM", driver: "AI capex cycle" },
-                      { name: "Real Assets", examples: "GLD, TIP, commodities", driver: "Inflation hedge" },
-                      { name: "International", examples: "EEM, VEA, INDA", driver: "Global growth, currency" },
-                      { name: "Fixed Income", examples: "AGG, TLT, HYG", driver: "Yield, duration sensitivity" },
-                      { name: "Small Cap", examples: "IWM, VB", driver: "Domestic growth, M&A" },
-                      { name: "Thematic", examples: "ARKK, sectoral bets", driver: "Narrative-driven" },
-                      { name: "Cash/Stable", examples: "Money market, SGOV", driver: "Capital preservation" }
-                    ].map((engine, i) => (
-                      <div key={i} className={`p-3 rounded border ${isPrintMode ? "bg-white border-gray-200" : "bg-white/5 border-white/10"}`}>
-                        <h4 className={`text-sm font-bold mb-1 ${isPrintMode ? "text-black" : "text-white"}`}>
-                          {engine.name}
-                        </h4>
-                        <p className={`text-xs mb-2 ${isPrintMode ? "text-gray-600" : "text-white/50"}`}>
-                          {engine.examples}
-                        </p>
-                        <p className={`text-xs ${isPrintMode ? "text-gray-700" : "text-white/60"}`}>
-                          {engine.driver}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                {/* Use the full EnginesExplainer component */}
+                <EnginesExplainer variant="full" mode={isBeginnerMode ? "beginner" : "expert"} />
               </div>
 
               {/* Macro-Driven Scoring */}
