@@ -6,10 +6,14 @@
  * Shows engine allocation matrix and macro-driven recommendations
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getPortfolio } from "@/lib/portfolio/store";
 import { generatePortfolioSummary } from "@/lib/portfolio/calc";
 import { engines } from "@/lib/engines/engineConfig";
+import { EngineDetailCard } from "@/components/engines/EngineDetailCard";
+import { EngineScoresChart } from "@/components/engines/EngineScoresChart";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
+import { RefreshIndicator } from "@/components/common/RefreshIndicator";
 import type { Portfolio } from "@/lib/portfolio/schema";
 import type { ScoringResult, EngineScore, MacroCase } from "@/lib/engines/engineScoring";
 
@@ -26,31 +30,39 @@ export function EnginesClient() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
+  const loadData = useCallback(async () => {
+    try {
+      if (!scoringData) {
         setIsLoading(true);
-
-        // Load portfolio
-        const loaded = getPortfolio();
-        setPortfolio(loaded);
-
-        // Fetch engine scoring
-        const response = await fetch("/api/engines/score?mock=true"); // Use mock=true for now
-        if (!response.ok) {
-          throw new Error("Failed to fetch engine scores");
-        }
-
-        const apiData: ApiResponse = await response.json();
-        setScoringData(apiData.data);
-      } catch (err) {
-        console.error("Error loading engine data:", err);
-        setError(err instanceof Error ? err.message : "Unknown error");
-      } finally {
-        setIsLoading(false);
       }
-    };
 
+      // Load portfolio
+      const loaded = getPortfolio();
+      setPortfolio(loaded);
+
+      // Fetch engine scoring
+      const response = await fetch("/api/engines/score?mock=true"); // Use mock=true for now
+      if (!response.ok) {
+        throw new Error("Failed to fetch engine scores");
+      }
+
+      const apiData: ApiResponse = await response.json();
+      setScoringData(apiData.data);
+    } catch (err) {
+      console.error("Error loading engine data:", err);
+      setError(err instanceof Error ? err.message : "Unknown error");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [scoringData]);
+
+  const { isRefreshing, lastRefresh, refresh, toggleAutoRefresh, autoRefreshEnabled } =
+    useAutoRefresh({
+      intervalMs: 5 * 60 * 1000, // 5 minutes
+      onRefresh: loadData,
+    });
+
+  useEffect(() => {
     loadData();
   }, []);
 
@@ -82,6 +94,17 @@ export function EnginesClient() {
 
   return (
     <div className="space-y-6">
+      {/* Header with Refresh */}
+      <div className="flex items-center justify-end">
+        <RefreshIndicator
+          lastRefresh={lastRefresh}
+          isRefreshing={isRefreshing}
+          onRefresh={refresh}
+          autoRefreshEnabled={autoRefreshEnabled}
+          onToggleAutoRefresh={toggleAutoRefresh}
+        />
+      </div>
+
       {/* Current Macro Case */}
       <div className="p-6 bg-gradient-to-br from-blue-600/20 to-purple-600/20 border border-blue-500/30 rounded-lg">
         <h2 className="text-2xl font-bold text-white mb-2">Current Macro Case</h2>
@@ -99,75 +122,33 @@ export function EnginesClient() {
         </div>
       </div>
 
-      {/* Engine Matrix */}
-      <div className="p-6 bg-white/5 border border-white/10 rounded-lg overflow-x-auto">
-        <h2 className="text-xl font-bold text-white mb-4">Engine Allocation Matrix</h2>
+      {/* Engine Scores Chart */}
+      <EngineScoresChart scores={new Map(engineScores.map((s) => [s.engine, s]))} />
 
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-white/10">
-              <th className="text-left text-white/60 font-semibold py-2 px-2">Engine</th>
-              <th className="text-center text-white/60 font-semibold py-2 px-2">Favored?</th>
-              <th className="text-right text-white/60 font-semibold py-2 px-2">Your %</th>
-              <th className="text-right text-white/60 font-semibold py-2 px-2">Target</th>
-              <th className="text-center text-white/60 font-semibold py-2 px-2">Status</th>
-              <th className="text-left text-white/60 font-semibold py-2 px-2">Why</th>
-            </tr>
-          </thead>
-          <tbody className="text-white/80">
-            {engines.map((engine) => {
-              const allocation = summary.totalByEngine.find((a) => a.engine === engine.id);
-              const delta = summary.engineDeltas.find((d) => d.engine === engine.id);
-              const currentPct = allocation?.totalPct || 0;
+      {/* Engine Details Grid */}
+      <div className="space-y-4">
+        <h2 className="text-2xl font-bold text-white">All Engines</h2>
+        <div className="grid grid-cols-1 gap-3">
+          {engines.map((engine) => {
+            const allocation = summary.totalByEngine.find((a) => a.engine === engine.id);
+            const delta = summary.engineDeltas.find((d) => d.engine === engine.id);
+            const currentPct = allocation?.totalPct || 0;
+            const score = getEngineScore(engine.id);
 
-              // Get real engine score
-              const score = getEngineScore(engine.id);
-              const stance = score?.stance || "NEUTRAL";
-              const reason = score?.reasons[0] || "No signal";
+            if (!score || !delta) return null;
 
-              return (
-                <tr key={engine.id} className="border-b border-white/5 hover:bg-white/5">
-                  <td className="py-3 px-2 font-semibold">{engine.label}</td>
-                  <td className="py-3 px-2 text-center">
-                    {stance === "OVERWEIGHT" && (
-                      <span className="px-2 py-1 bg-green-500/20 text-green-300 rounded text-xs">
-                        ▲ OVER
-                      </span>
-                    )}
-                    {stance === "NEUTRAL" && (
-                      <span className="px-2 py-1 bg-gray-500/20 text-gray-300 rounded text-xs">
-                        — NEUTRAL
-                      </span>
-                    )}
-                    {stance === "UNDERWEIGHT" && (
-                      <span className="px-2 py-1 bg-red-500/20 text-red-300 rounded text-xs">
-                        ▼ UNDER
-                      </span>
-                    )}
-                  </td>
-                  <td className="py-3 px-2 text-right font-mono">
-                    {currentPct.toFixed(1)}%
-                  </td>
-                  <td className="py-3 px-2 text-right text-white/60">
-                    {delta?.targetPct.toFixed(0)}%
-                  </td>
-                  <td className="py-3 px-2 text-center">
-                    {delta?.status === "OVER" && (
-                      <span className="text-red-300 text-xs">OVER</span>
-                    )}
-                    {delta?.status === "UNDER" && (
-                      <span className="text-yellow-300 text-xs">UNDER</span>
-                    )}
-                    {delta?.status === "IN_RANGE" && (
-                      <span className="text-green-300 text-xs">OK</span>
-                    )}
-                  </td>
-                  <td className="py-3 px-2 text-xs text-white/60">{reason}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+            return (
+              <EngineDetailCard
+                key={engine.id}
+                engineId={engine.id}
+                score={score}
+                currentPct={currentPct}
+                targetPct={delta.targetPct}
+                deltaStatus={delta.status}
+              />
+            );
+          })}
+        </div>
       </div>
 
       {/* Action Panel */}
@@ -258,9 +239,12 @@ export function EnginesClient() {
       {/* Watch Triggers */}
       <div className="p-6 bg-white/5 border border-white/10 rounded-lg">
         <h2 className="text-xl font-bold text-white mb-4">Watch Triggers</h2>
+        <p className="text-sm text-white/60 mb-4">
+          Conditions that could shift engine allocations
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           {macroCase.watchTriggers.map((trigger, i) => (
-            <div key={i} className="p-4 bg-white/5 rounded-lg">
+            <div key={i} className="p-4 bg-white/5 rounded-lg border border-white/10">
               <p className="text-white/80">
                 <span className="font-semibold text-blue-300">
                   {trigger.condition}
@@ -271,15 +255,6 @@ export function EnginesClient() {
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Engine Details (Expandable) */}
-      <div className="p-6 bg-white/5 border border-white/10 rounded-lg">
-        <h2 className="text-xl font-bold text-white mb-4">Engine Details</h2>
-        <p className="text-sm text-white/60">
-          Click an engine above to see detailed description, examples, and macro drivers.
-          (Full implementation pending)
-        </p>
       </div>
     </div>
   );

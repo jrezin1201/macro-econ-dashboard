@@ -9,7 +9,7 @@
  * Now with Beginner Mode for educational guidance
  */
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import type { MacroIndicator } from "@/lib/macro/types";
 import { PortfolioImpactPanel } from "./PortfolioImpactPanel";
 import { ThisWeekActionsPlaybook } from "./ThisWeekActionsPlaybook";
@@ -21,6 +21,11 @@ import { ExplanationBadge } from "./ExplanationBadge";
 import { WhatCouldGoWrong } from "./WhatCouldGoWrong";
 import { TimeHorizonView } from "./TimeHorizonView";
 import { DataFreshnessPanel } from "./DataFreshnessPanel";
+import { MacroChartsSection } from "@/components/macro/MacroChartsSection";
+import { RegimeHistoryTimeline } from "@/components/macro/RegimeHistoryTimeline";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
+import { RefreshIndicator } from "@/components/common/RefreshIndicator";
+import { recordRegimeSnapshot } from "@/lib/macro/regimeHistory";
 import type { LayerDelta, LayerWeights } from "@/lib/portfolio/portfolioStore";
 import type { ActionPolicy } from "@/lib/portfolio/actionPolicy";
 import { formatFetchTime } from "@/lib/data/fetchWithMeta";
@@ -142,6 +147,26 @@ interface Portfolio {
   actionPolicy: ActionPolicy;
 }
 
+interface ChartData {
+  rates: {
+    fedfunds: any[];
+    dgs2: any[];
+    dgs10: any[];
+  };
+  growth: {
+    sentiment: any[];
+    payems: any[];
+  };
+  inflation: {
+    cpi: any[];
+    pce: any[];
+  };
+  credit: {
+    hyOAS: any[];
+    stlFSI: any[];
+  };
+}
+
 interface EnhancedMacroData {
   regime: Regime;
   alert: Alert;
@@ -156,20 +181,49 @@ interface EnhancedMacroData {
   bitcoin?: Bitcoin;
   microstress?: Microstress;
   portfolio?: Portfolio;
+  chartData?: ChartData;
 }
 
 interface Props {
   data: EnhancedMacroData;
 }
 
-export function MacroRegimeDashboard({ data }: Props) {
+export function MacroRegimeDashboard({ data: initialData }: Props) {
+  const [data, setData] = useState(initialData);
+
   const {
     regime, alert, tilts, composites, indicators, rates, credit, liquidity, lastUpdated,
-    breadth, bitcoin, microstress, portfolio
+    breadth, bitcoin, microstress, portfolio, chartData
   } = data;
 
   // Beginner Mode state
   const [isBeginnerMode, setIsBeginnerMode] = useState(true);
+
+  // Auto-refresh
+  const fetchData = useCallback(async () => {
+    try {
+      const res = await fetch("/api/macro/regime");
+      if (!res.ok) throw new Error("Failed to fetch");
+      const newData = await res.json();
+      setData({
+        ...newData,
+        lastUpdated: new Date(newData.lastUpdated),
+      });
+    } catch (error) {
+      console.error("Failed to refresh macro data:", error);
+    }
+  }, []);
+
+  const { isRefreshing, lastRefresh, refresh, toggleAutoRefresh, autoRefreshEnabled } =
+    useAutoRefresh({
+      intervalMs: 5 * 60 * 1000, // 5 minutes
+      onRefresh: fetchData,
+    });
+
+  // Record regime snapshot when data changes
+  useEffect(() => {
+    recordRegimeSnapshot(regime.regime, regime.confidence, alert.level);
+  }, [regime.regime, regime.confidence, alert.level]);
 
   // Group indicators by category
   const indicatorsByCategory = indicators.reduce((acc: Record<string, MacroIndicator[]>, ind: MacroIndicator) => {
@@ -199,13 +253,31 @@ export function MacroRegimeDashboard({ data }: Props) {
       {isBeginnerMode && <ExplanationSidebar />}
 
       <div className="max-w-7xl mx-auto px-3 md:px-6 lg:px-8 space-y-6">
-        {/* Header with Mode Toggle */}
-        <div className="text-center">
+        {/* Header with Mode Toggle and Refresh */}
+        <div className="text-center relative">
+          <div className="absolute right-0 top-0 hidden lg:block">
+            <RefreshIndicator
+              lastRefresh={lastRefresh}
+              isRefreshing={isRefreshing}
+              onRefresh={refresh}
+              autoRefreshEnabled={autoRefreshEnabled}
+              onToggleAutoRefresh={toggleAutoRefresh}
+            />
+          </div>
           <div className="flex justify-center items-center gap-4 mb-3">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">Macro Regime Analysis</h1>
           </div>
-          <div className="flex justify-center mb-3">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-3 mb-3">
             <ModeToggle onChange={setIsBeginnerMode} />
+            <div className="lg:hidden">
+              <RefreshIndicator
+                lastRefresh={lastRefresh}
+                isRefreshing={isRefreshing}
+                onRefresh={refresh}
+                autoRefreshEnabled={autoRefreshEnabled}
+                onToggleAutoRefresh={toggleAutoRefresh}
+              />
+            </div>
           </div>
           <p className="text-sm md:text-base text-white/60">
             Rule-based regime classification + portfolio tilt guidance + confirmation layers
@@ -598,6 +670,24 @@ export function MacroRegimeDashboard({ data }: Props) {
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {/* Regime History Timeline */}
+          <div className="col-span-full lg:col-span-1">
+            <RegimeHistoryTimeline />
+          </div>
+
+          {/* Historical Charts Section */}
+          {chartData && (
+            <div className="col-span-full">
+              <AccordionSimple
+                title="Historical Charts (5 Years)"
+                defaultOpen={false}
+                alwaysOpenOnDesktop={false}
+              >
+                <MacroChartsSection data={chartData} />
+              </AccordionSimple>
             </div>
           )}
 

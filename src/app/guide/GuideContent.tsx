@@ -62,6 +62,12 @@ export function GuideContent() {
       { id: "examples", title: "Example Interpretations" },
       { id: "triggers", title: "What Changes the Regime" }
     ]},
+    { id: "portfolio-engines", title: "Portfolio & Economic Engines", subsections: [
+      { id: "portfolio-setup", title: "Setting Up Your Portfolio" },
+      { id: "engine-classification", title: "12 Economic Engines" },
+      { id: "macro-scoring", title: "Macro-Driven Scoring" },
+      { id: "rebalancing", title: "When to Rebalance" }
+    ]},
     { id: "playbook", title: "Weekly Playbook", subsections: [
       { id: "checklist", title: "10-Minute Checklist" },
       { id: "by-account", title: "By Account Type" },
@@ -574,7 +580,258 @@ export function GuideContent() {
               </div>
             </section>
 
-            {/* SECTION 4: Weekly Playbook */}
+            {/* SECTION 4: Portfolio & Economic Engines */}
+            <section id="portfolio-engines" className="mb-12 scroll-mt-20">
+              <h2 className={`text-2xl md:text-3xl font-bold mb-6 ${isPrintMode ? "text-black" : "text-white"}`}>
+                Portfolio & Economic Engines
+              </h2>
+
+              {/* Setting Up Your Portfolio */}
+              <div id="portfolio-setup" className="mb-8 scroll-mt-20">
+                <h3 className={`text-xl font-semibold mb-4 ${isPrintMode ? "text-black" : "text-white"}`}>
+                  Setting Up Your Portfolio
+                </h3>
+                <div className={`rounded-lg border ${isPrintMode ? "bg-gray-50 border-gray-300" : "bg-white/5 border-white/10"} p-6 space-y-4`}>
+                  <p className={`text-sm ${isPrintMode ? "text-gray-700" : "text-white/70"}`}>
+                    The Portfolio page (<code>/portfolio</code>) is where you track your holdings and see how they map to the 12 economic engines.
+                    The system automatically classifies each holding and shows real-time allocation charts.
+                  </p>
+                  <div>
+                    <h4 className={`text-sm font-semibold mb-2 ${isPrintMode ? "text-black" : "text-white"}`}>
+                      How to Add Holdings:
+                    </h4>
+                    <ol className="space-y-2">
+                      {[
+                        "Navigate to /portfolio",
+                        "Click the green 'Add Holding' button",
+                        "Start typing a ticker - autocomplete will suggest 35+ common stocks/ETFs",
+                        "Select ticker, enter weight % and account type (Taxable, Roth, 401k, Other)",
+                        "Optional: Add notes about the position",
+                        "System auto-classifies using 75+ ticker database (AAPL → Cashflow Compounders)"
+                      ].map((step, i) => (
+                        <li key={i} className={`text-sm flex gap-2 ${isPrintMode ? "text-gray-700" : "text-white/70"}`}>
+                          <span className={`font-semibold ${isPrintMode ? "text-blue-900" : "text-blue-400"}`}>{i + 1}.</span>
+                          {step}
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+
+                  <div>
+                    <h4 className={`text-sm font-semibold mb-2 ${isPrintMode ? "text-black" : "text-white"}`}>
+                      Features:
+                    </h4>
+                    <ul className="space-y-2">
+                      {[
+                        { feature: "Ticker Autocomplete", desc: "Start typing and see suggestions instantly (supports AAPL, MSFT, QQQ, SGOV, MSTR, etc.)" },
+                        { feature: "Smart Classification", desc: "75+ ticker mappings + sector-based fallbacks ensure accurate engine classification" },
+                        { feature: "Allocation Chart", desc: "See your portfolio broken down by engine with an interactive pie chart" },
+                        { feature: "Demo Mode", desc: "Toggle between demo portfolio and your own - great for testing" },
+                        { feature: "Full CRUD", desc: "Add, edit, delete holdings with validation (total must be 100% ±0.25%)" },
+                        { feature: "Edit/Delete Icons", desc: "Quick actions on each row for easy portfolio management" }
+                      ].map((item, i) => (
+                        <li key={i} className={`text-sm ${isPrintMode ? "text-gray-700" : "text-white/70"}`}>
+                          <strong className={isPrintMode ? "text-blue-900" : "text-blue-400"}>{item.feature}:</strong> {item.desc}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className={`p-4 rounded border ${isPrintMode ? "bg-green-50 border-green-200" : "bg-green-500/10 border-green-500/20"}`}>
+                    <p className={`text-xs mb-2 ${isPrintMode ? "text-green-900" : "text-green-300"}`}>
+                      ✨ <strong>New:</strong> Auto-Refresh Every 5 Minutes
+                    </p>
+                    <p className={`text-xs ${isPrintMode ? "text-green-900" : "text-green-200/80"}`}>
+                      Portfolio, Engines, Bitcoin, and Macro Regime pages now auto-refresh data every 5 minutes.
+                      See the refresh indicator in the top-right with last update time and manual refresh button.
+                    </p>
+                  </div>
+
+                  <div className={`p-4 rounded border ${isPrintMode ? "bg-blue-50 border-blue-200" : "bg-blue-500/10 border-blue-500/20"}`}>
+                    <p className={`text-xs ${isPrintMode ? "text-blue-900" : "text-blue-300"}`}>
+                      💡 <strong>Storage:</strong> All portfolio data persists in your browser&apos;s localStorage.
+                      It won&apos;t sync across devices, but it&apos;s perfect for personal tracking without needing an account.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 12 Economic Engines */}
+              <div id="engine-classification" className="mb-8 scroll-mt-20">
+                <h3 className={`text-xl font-semibold mb-4 ${isPrintMode ? "text-black" : "text-white"}`}>
+                  The 12 Economic Engines
+                </h3>
+                <div className={`rounded-lg border ${isPrintMode ? "bg-gray-50 border-gray-300" : "bg-white/5 border-white/10"} p-6 space-y-4`}>
+                  <p className={`text-sm ${isPrintMode ? "text-gray-700" : "text-white/70"}`}>
+                    Every holding in your portfolio is classified by its primary economic driver.
+                    These 12 engines represent distinct return sources that respond differently to macro conditions.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { name: "Quality Factor", examples: "AAPL, MSFT, UNH", driver: "Moats, pricing power, cash flow" },
+                      { name: "Growth Duration", examples: "NVDA, TSLA, AMZN", driver: "Revenue growth, future earnings" },
+                      { name: "Volatility/Optionality", examples: "BTC, COIN, MSTR", driver: "Speculation, asymmetric upside" },
+                      { name: "Defensive", examples: "PG, KO, WMT", driver: "Stability, dividends, recession-proof" },
+                      { name: "Cyclical Value", examples: "XOM, CAT, JPM", driver: "Economic reacceleration" },
+                      { name: "AI/Tech Infrastructure", examples: "NVDA, SMCI, TSM", driver: "AI capex cycle" },
+                      { name: "Real Assets", examples: "GLD, TIP, commodities", driver: "Inflation hedge" },
+                      { name: "International", examples: "EEM, VEA, INDA", driver: "Global growth, currency" },
+                      { name: "Fixed Income", examples: "AGG, TLT, HYG", driver: "Yield, duration sensitivity" },
+                      { name: "Small Cap", examples: "IWM, VB", driver: "Domestic growth, M&A" },
+                      { name: "Thematic", examples: "ARKK, sectoral bets", driver: "Narrative-driven" },
+                      { name: "Cash/Stable", examples: "Money market, SGOV", driver: "Capital preservation" }
+                    ].map((engine, i) => (
+                      <div key={i} className={`p-3 rounded border ${isPrintMode ? "bg-white border-gray-200" : "bg-white/5 border-white/10"}`}>
+                        <h4 className={`text-sm font-bold mb-1 ${isPrintMode ? "text-black" : "text-white"}`}>
+                          {engine.name}
+                        </h4>
+                        <p className={`text-xs mb-2 ${isPrintMode ? "text-gray-600" : "text-white/50"}`}>
+                          {engine.examples}
+                        </p>
+                        <p className={`text-xs ${isPrintMode ? "text-gray-700" : "text-white/60"}`}>
+                          {engine.driver}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Macro-Driven Scoring */}
+              <div id="macro-scoring" className="mb-8 scroll-mt-20">
+                <h3 className={`text-xl font-semibold mb-4 ${isPrintMode ? "text-black" : "text-white"}`}>
+                  Macro-Driven Scoring
+                </h3>
+                <div className={`rounded-lg border ${isPrintMode ? "bg-gray-50 border-gray-300" : "bg-white/5 border-white/10"} p-6 space-y-4`}>
+                  <p className={`text-sm ${isPrintMode ? "text-gray-700" : "text-white/70"}`}>
+                    The Engines page (<code>/engines</code>) scores each engine based on current macro conditions.
+                    Each engine gets an OVERWEIGHT, NEUTRAL, or UNDERWEIGHT stance with a 0-100 score, visualized with an interactive bar chart.
+                  </p>
+                  <div>
+                    <h4 className={`text-sm font-semibold mb-2 ${isPrintMode ? "text-black" : "text-white"}`}>
+                      Scoring Inputs:
+                    </h4>
+                    <ul className="space-y-2">
+                      {[
+                        { factor: "Liquidity", impact: "More liquidity → favor Growth/Tech/Crypto" },
+                        { factor: "Inflation Regime", impact: "High inflation → favor Real Assets/Value" },
+                        { factor: "Growth/Recession Risk", impact: "Slowdown → favor Defensive/Quality" },
+                        { factor: "Fed Policy", impact: "Hawkish → penalize Duration, favor Cash" },
+                        { factor: "Breadth & Sentiment", impact: "Narrow rallies → reduce conviction" },
+                        { factor: "Bitcoin Trend", impact: "BTC > 200D MA → favor Volatility engine" }
+                      ].map((item, i) => (
+                        <li key={i} className={`text-sm ${isPrintMode ? "text-gray-700" : "text-white/70"}`}>
+                          <strong className={isPrintMode ? "text-blue-900" : "text-blue-400"}>{item.factor}:</strong> {item.impact}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h4 className={`text-sm font-semibold mb-2 ${isPrintMode ? "text-black" : "text-white"}`}>
+                      Charts & Visualizations:
+                    </h4>
+                    <ul className="space-y-2">
+                      {[
+                        { page: "Engines (/engines)", chart: "Horizontal bar chart showing engine scores with color-coded stances" },
+                        { page: "Portfolio (/portfolio)", chart: "Pie chart of your allocation across the 12 engines" },
+                        { page: "Bitcoin (/bitcoin)", chart: "365-day price chart with 20D, 50D, and 200D moving averages" },
+                        { page: "Macro Regime (/macro/regime)", chart: "Time-series charts for 8 key FRED indicators (Fed Funds, 10Y, CPI, PCE, etc.)" },
+                        { page: "Regime History", chart: "Timeline showing regime changes over time with confidence levels" }
+                      ].map((item, i) => (
+                        <li key={i} className={`text-sm ${isPrintMode ? "text-gray-700" : "text-white/70"}`}>
+                          <strong className={isPrintMode ? "text-purple-900" : "text-purple-400"}>{item.page}:</strong> {item.chart}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className={`p-4 rounded border ${isPrintMode ? "bg-green-50 border-green-200" : "bg-green-500/10 border-green-500/20"}`}>
+                    <p className={`text-xs mb-2 ${isPrintMode ? "text-green-900" : "text-green-300"}`}>
+                      💡 <strong>Interactive Charts:</strong> All charts are built with Recharts and include tooltips on hover.
+                    </p>
+                    <p className={`text-xs ${isPrintMode ? "text-green-900" : "text-green-200/80"}`}>
+                      Each engine card is expandable - click to see tailwinds/headwinds, confidence level, and specific reasons for the stance.
+                    </p>
+                  </div>
+
+                  <div className={`p-4 rounded border ${isPrintMode ? "bg-purple-50 border-purple-200" : "bg-purple-500/10 border-purple-500/20"}`}>
+                    <p className={`text-xs mb-2 ${isPrintMode ? "text-purple-900" : "text-purple-300"}`}>
+                      📈 <strong>Regime History Tracking:</strong> The Macro Regime page now tracks regime changes automatically.
+                    </p>
+                    <p className={`text-xs ${isPrintMode ? "text-purple-900" : "text-purple-200/80"}`}>
+                      See when regimes shifted, days since last change, and most common regime over the last 90 days (stored in localStorage).
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* When to Rebalance */}
+              <div id="rebalancing" className="mb-8 scroll-mt-20">
+                <h3 className={`text-xl font-semibold mb-4 ${isPrintMode ? "text-black" : "text-white"}`}>
+                  When to Rebalance
+                </h3>
+                <div className={`rounded-lg border ${isPrintMode ? "bg-gray-50 border-gray-300" : "bg-white/5 border-white/10"} p-6 space-y-4`}>
+                  <p className={`text-sm ${isPrintMode ? "text-gray-700" : "text-white/70"}`}>
+                    The system compares your current portfolio weight to target ranges for each engine.
+                    Use the three action buckets on /engines to guide decisions:
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className={`p-4 rounded border ${isPrintMode ? "bg-green-50 border-green-200" : "bg-green-500/10 border-green-500/20"}`}>
+                      <h4 className={`text-sm font-bold mb-2 ${isPrintMode ? "text-green-900" : "text-green-300"}`}>
+                        ✓ Add (Favored + Under)
+                      </h4>
+                      <p className={`text-xs ${isPrintMode ? "text-green-900" : "text-green-200/80"}`}>
+                        Engines that are OVERWEIGHT stance AND your portfolio is underweight.
+                        Deploy new capital here.
+                      </p>
+                    </div>
+                    <div className={`p-4 rounded border ${isPrintMode ? "bg-blue-50 border-blue-200" : "bg-blue-500/10 border-blue-500/20"}`}>
+                      <h4 className={`text-sm font-bold mb-2 ${isPrintMode ? "text-blue-900" : "text-blue-300"}`}>
+                        — Hold (In Range)
+                      </h4>
+                      <p className={`text-xs ${isPrintMode ? "text-blue-900" : "text-blue-200/80"}`}>
+                        Your weight is within target range. No action needed.
+                      </p>
+                    </div>
+                    <div className={`p-4 rounded border ${isPrintMode ? "bg-red-50 border-red-200" : "bg-red-500/10 border-red-500/20"}`}>
+                      <h4 className={`text-sm font-bold mb-2 ${isPrintMode ? "text-red-900" : "text-red-300"}`}>
+                        ✗ Avoid (Gated or Over)
+                      </h4>
+                      <p className={`text-xs ${isPrintMode ? "text-red-900" : "text-red-200/80"}`}>
+                        Engines that are GATED (risk-off signal) OR you're overweight an UNDERWEIGHT stance.
+                        Consider trimming.
+                      </p>
+                    </div>
+                  </div>
+                  <div className={`p-4 rounded border ${isPrintMode ? "bg-yellow-50 border-yellow-200" : "bg-yellow-500/10 border-yellow-500/20"}`}>
+                    <p className={`text-xs ${isPrintMode ? "text-yellow-900" : "text-yellow-200/70"}`}>
+                      ⚠️ <strong>Rebalancing Frequency:</strong> Only rebalance when a trigger hits or when adding new capital.
+                      Don't force trades just because deltas exist—transaction costs and taxes matter.
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className={`text-sm font-semibold mb-2 ${isPrintMode ? "text-black" : "text-white"}`}>
+                      Rebalancing Examples:
+                    </h4>
+                    <ul className="space-y-2">
+                      {[
+                        { scenario: "New paycheck arrives", action: "Deploy to 'Add' bucket engines" },
+                        { scenario: "BTC crosses 200D MA upward", action: "Consider adding MSTR/COIN if under target" },
+                        { scenario: "Alert goes RED + breadth diverges", action: "Trim 'Avoid' bucket, move to Cash/Defensive" },
+                        { scenario: "Regime shifts to 'Soft Landing'", action: "Reweight toward Quality/Cyclicals per new scores" }
+                      ].map((item, i) => (
+                        <li key={i} className={`text-sm ${isPrintMode ? "text-gray-700" : "text-white/70"}`}>
+                          <strong className={isPrintMode ? "text-purple-900" : "text-purple-400"}>{item.scenario}:</strong> {item.action}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* SECTION 5: Weekly Playbook */}
             <section id="playbook" className="mb-12 scroll-mt-20">
               <h2 className={`text-2xl md:text-3xl font-bold mb-6 ${isPrintMode ? "text-black" : "text-white"}`}>
                 Weekly Playbook (10 minutes)

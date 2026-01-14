@@ -39,29 +39,43 @@ export interface NavSection {
   defaultExpanded?: boolean;
 }
 
-// Main navigation items
+// Main navigation items (always visible)
 export const mainNavigation: NavItem[] = [
-  { name: "Dashboard", href: "/", icon: HomeIcon },
   { name: "Guide", href: "/guide", icon: BookOpenIcon },
+  { name: "Portfolio", href: "/portfolio", icon: BriefcaseIcon },
+];
+
+// Weekly Workflow section (follows the 10-minute checklist)
+export const weeklyWorkflowNavigation: NavItem[] = [
+  { name: "Macro Regime", href: "/macro/regime", icon: BeakerIcon },
+  { name: "Equity Breadth", href: "/macro/breadth", icon: ChartBarIcon },
+  { name: "Bitcoin Analysis", href: "/bitcoin", icon: CurrencyDollarIcon },
+  { name: "Credit Microstress", href: "/macro/microstress", icon: ShieldCheckIcon },
+  { name: "Economic Engines", href: "/engines", icon: Cog6ToothIcon },
+];
+
+// Analysis Tools section
+export const analysisToolsNavigation: NavItem[] = [
+  { name: "Dashboard", href: "/", icon: HomeIcon },
   { name: "Data Explorer", href: "/explore", icon: MagnifyingGlassIcon },
   { name: "Chart Builder", href: "/charts", icon: ChartBarIcon },
   { name: "Correlations", href: "/correlations", icon: ArrowsRightLeftIcon },
   { name: "Custom Analysis", href: "/analysis", icon: BeakerIcon },
+  { name: "U.S. Macro", href: "/macro/us", icon: DocumentChartBarIcon },
 ];
 
-// Macro Analysis section
-export const macroNavigation: NavItem[] = [
-  { name: "Macro Regime", href: "/macro/regime", icon: BeakerIcon },
-  { name: "Equity Breadth", href: "/macro/breadth", icon: ChartBarIcon },
-  { name: "Credit Microstress", href: "/macro/microstress", icon: BeakerIcon },
-  { name: "Bitcoin Analysis", href: "/bitcoin", icon: CurrencyDollarIcon },
-  { name: "U.S. Macro", href: "/macro/us", icon: HomeIcon },
-];
-
-// Portfolio & Engines section
+// Legacy navigation (kept for backwards compatibility)
 export const portfolioNavigation: NavItem[] = [
   { name: "Portfolio", href: "/portfolio", icon: BriefcaseIcon },
   { name: "Economic Engines", href: "/engines", icon: Cog6ToothIcon },
+];
+
+export const macroNavigation: NavItem[] = [
+  { name: "Macro Regime", href: "/macro/regime", icon: BeakerIcon },
+  { name: "Equity Breadth", href: "/macro/breadth", icon: ChartBarIcon },
+  { name: "Credit Microstress", href: "/macro/microstress", icon: ShieldCheckIcon },
+  { name: "Bitcoin Analysis", href: "/bitcoin", icon: CurrencyDollarIcon },
+  { name: "U.S. Macro", href: "/macro/us", icon: HomeIcon },
 ];
 
 // Company Analysis section
@@ -90,27 +104,27 @@ export const devTabsNavigation: NavItem[] = [
   { name: "MCP Data Sources", href: "/mcp", icon: GlobeAltIcon },
 ];
 
-// All navigation sections
+// All navigation sections (new workflow-based structure)
 export const navSections: NavSection[] = [
   {
-    title: "Main",
+    title: "Start Here",
     items: mainNavigation,
     defaultExpanded: true,
   },
   {
-    title: "Portfolio & Engines",
-    items: portfolioNavigation,
+    title: "Weekly Workflow",
+    items: weeklyWorkflowNavigation,
     defaultExpanded: true,
   },
   {
-    title: "Macro Analysis",
-    items: macroNavigation,
-    defaultExpanded: true,
+    title: "Analysis Tools",
+    items: analysisToolsNavigation,
+    defaultExpanded: false,
   },
   {
     title: "Company Analysis",
     items: companyNavigation,
-    defaultExpanded: true,
+    defaultExpanded: false,
   },
   {
     title: "Dev Tabs",
@@ -122,8 +136,8 @@ export const navSections: NavSection[] = [
 // Flatten all nav items for easy searching
 export const allNavItems: NavItem[] = [
   ...mainNavigation,
-  ...portfolioNavigation,
-  ...macroNavigation,
+  ...weeklyWorkflowNavigation,
+  ...analysisToolsNavigation,
   ...companyNavigation,
   ...devTabsNavigation,
 ];

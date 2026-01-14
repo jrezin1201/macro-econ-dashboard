@@ -7,7 +7,9 @@
 
 import { notFound } from "next/navigation";
 import { CompanyHeader } from "@/components/company/CompanyHeader";
+import { CompanyPortfolioImpact } from "@/components/company/CompanyPortfolioImpact";
 import { providers } from "@/lib/company/providers";
+import { getPortfolio } from "@/lib/portfolio/store";
 
 interface Props {
   params: Promise<{ ticker: string }>;
@@ -37,6 +39,9 @@ export default async function CompanyOverviewPage(props: Props) {
   if (!profile) {
     notFound();
   }
+
+  // Get portfolio for holdings check
+  const portfolio = getPortfolio();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/20 to-gray-900 p-6">
@@ -117,6 +122,9 @@ export default async function CompanyOverviewPage(props: Props) {
                 <QuickLink href={`/company/${upperTicker}/scenarios`} label="Scenarios" />
               </div>
             </div>
+
+            {/* Portfolio Status */}
+            <CompanyPortfolioImpact ticker={upperTicker} portfolio={portfolio} />
 
             {/* Company Info */}
             {profile.website && (

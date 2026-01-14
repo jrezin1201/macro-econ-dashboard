@@ -9,14 +9,18 @@ import { PortfolioStatusPill } from "@/components/portfolio/PortfolioStatusPill"
 import { PortfolioQuickDrawer } from "@/components/portfolio/PortfolioQuickDrawer";
 import {
   mainNavigation,
-  macroNavigation,
+  weeklyWorkflowNavigation,
+  analysisToolsNavigation,
+  companyNavigation,
   devTabsNavigation,
   allNavItems,
 } from "@/lib/nav/navItems";
 
 export function Sidebar() {
   const pathname = usePathname();
-  const [macroExpanded, setMacroExpanded] = useState(true);
+  const [weeklyWorkflowExpanded, setWeeklyWorkflowExpanded] = useState(true);
+  const [analysisToolsExpanded, setAnalysisToolsExpanded] = useState(false);
+  const [companyExpanded, setCompanyExpanded] = useState(false);
   const [devTabsExpanded, setDevTabsExpanded] = useState(false);
   const [portfolioDrawerOpen, setPortfolioDrawerOpen] = useState(false);
 
@@ -37,8 +41,9 @@ export function Sidebar() {
           {/* Navigation */}
           <nav className="flex flex-1 flex-col">
             <ul role="list" className="flex flex-1 flex-col gap-y-7">
-              {/* Main Navigation */}
+              {/* Start Here Section */}
               <li>
+                <div className="text-xs font-semibold leading-6 text-gray-400 mb-2">START HERE</div>
                 <ul role="list" className="-mx-2 space-y-1">
                   {mainNavigation.map((item) => {
                     const isActive = pathname === item.href;
@@ -69,15 +74,15 @@ export function Sidebar() {
                 </ul>
               </li>
 
-              {/* Macro Analysis Section */}
+              {/* Weekly Workflow Section */}
               <li>
                 <button
-                  onClick={() => setMacroExpanded(!macroExpanded)}
+                  onClick={() => setWeeklyWorkflowExpanded(!weeklyWorkflowExpanded)}
                   className="flex items-center justify-between w-full text-xs font-semibold leading-6 text-gray-400 hover:text-white"
                 >
-                  Macro Analysis
+                  WEEKLY WORKFLOW
                   <svg
-                    className={`h-5 w-5 transition-transform ${macroExpanded ? "rotate-90" : ""}`}
+                    className={`h-5 w-5 transition-transform ${weeklyWorkflowExpanded ? "rotate-90" : ""}`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -85,9 +90,105 @@ export function Sidebar() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
-                {macroExpanded && (
+                {weeklyWorkflowExpanded && (
                   <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {macroNavigation.map((item) => {
+                    {weeklyWorkflowNavigation.map((item) => {
+                      const isActive = pathname === item.href;
+                      return (
+                        <li key={item.name}>
+                          <Link
+                            href={item.href}
+                            className={`
+                              group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all
+                              ${
+                                isActive
+                                  ? "bg-blue-600 text-white"
+                                  : "text-gray-300 hover:text-white hover:bg-white/10"
+                              }
+                            `}
+                          >
+                            <item.icon
+                              className={`h-6 w-6 shrink-0 ${
+                                isActive ? "text-white" : "text-gray-400 group-hover:text-white"
+                              }`}
+                              aria-hidden="true"
+                            />
+                            {item.name}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </li>
+
+              {/* Analysis Tools Section */}
+              <li>
+                <button
+                  onClick={() => setAnalysisToolsExpanded(!analysisToolsExpanded)}
+                  className="flex items-center justify-between w-full text-xs font-semibold leading-6 text-gray-400 hover:text-white"
+                >
+                  ANALYSIS TOOLS
+                  <svg
+                    className={`h-5 w-5 transition-transform ${analysisToolsExpanded ? "rotate-90" : ""}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+                {analysisToolsExpanded && (
+                  <ul role="list" className="-mx-2 mt-2 space-y-1">
+                    {analysisToolsNavigation.map((item) => {
+                      const isActive = pathname === item.href;
+                      return (
+                        <li key={item.name}>
+                          <Link
+                            href={item.href}
+                            className={`
+                              group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all
+                              ${
+                                isActive
+                                  ? "bg-blue-600 text-white"
+                                  : "text-gray-300 hover:text-white hover:bg-white/10"
+                              }
+                            `}
+                          >
+                            <item.icon
+                              className={`h-6 w-6 shrink-0 ${
+                                isActive ? "text-white" : "text-gray-400 group-hover:text-white"
+                              }`}
+                              aria-hidden="true"
+                            />
+                            {item.name}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </li>
+
+              {/* Company Analysis Section */}
+              <li>
+                <button
+                  onClick={() => setCompanyExpanded(!companyExpanded)}
+                  className="flex items-center justify-between w-full text-xs font-semibold leading-6 text-gray-400 hover:text-white"
+                >
+                  COMPANY ANALYSIS
+                  <svg
+                    className={`h-5 w-5 transition-transform ${companyExpanded ? "rotate-90" : ""}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+                {companyExpanded && (
+                  <ul role="list" className="-mx-2 mt-2 space-y-1">
+                    {companyNavigation.map((item) => {
                       const isActive = pathname === item.href;
                       return (
                         <li key={item.name}>
@@ -123,7 +224,7 @@ export function Sidebar() {
                   onClick={() => setDevTabsExpanded(!devTabsExpanded)}
                   className="flex items-center justify-between w-full text-xs font-semibold leading-6 text-gray-400 hover:text-white"
                 >
-                  Dev Tabs
+                  DEV TABS
                   <svg
                     className={`h-5 w-5 transition-transform ${devTabsExpanded ? "rotate-90" : ""}`}
                     fill="none"

@@ -380,6 +380,26 @@ async function fetchMacroData() {
       layerDeltas,
       actionPolicy,
     },
+    // Add raw time series data for charts
+    chartData: {
+      rates: {
+        fedfunds,
+        dgs2,
+        dgs10,
+      },
+      growth: {
+        sentiment,
+        payems,
+      },
+      inflation: {
+        cpi,
+        pce,
+      },
+      credit: {
+        hyOAS,
+        stlFSI,
+      },
+    },
   };
 }
 

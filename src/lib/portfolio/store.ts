@@ -104,7 +104,7 @@ function createEmptyPortfolio(): Portfolio {
     version: 1,
     holdings: [],
     targets: defaultTargets,
-    useDemoHoldings: true,
+    useDemoHoldings: false,
     updatedAt: new Date().toISOString(),
   };
 }
@@ -123,14 +123,14 @@ function createDemoPortfolio(): Portfolio {
 }
 
 /**
- * Get current portfolio (from storage or demo)
+ * Get current portfolio (from storage or empty)
  */
 export function getPortfolio(): Portfolio {
   const stored = getStoredPortfolio();
 
-  // If no stored portfolio or using demo, return demo
-  if (!stored || stored.useDemoHoldings) {
-    return createDemoPortfolio();
+  // If no stored portfolio, return empty
+  if (!stored) {
+    return createEmptyPortfolio();
   }
 
   return stored;
