@@ -13,6 +13,7 @@ import {
   GlobeAltIcon,
   CurrencyDollarIcon,
   DocumentTextIcon,
+  BookOpenIcon,
 } from "@heroicons/react/24/outline";
 
 export interface NavItem {
@@ -30,6 +31,7 @@ export interface NavSection {
 // Main navigation items
 export const mainNavigation: NavItem[] = [
   { name: "Dashboard", href: "/", icon: HomeIcon },
+  { name: "Guide", href: "/guide", icon: BookOpenIcon },
   { name: "Data Explorer", href: "/explore", icon: MagnifyingGlassIcon },
   { name: "Chart Builder", href: "/charts", icon: ChartBarIcon },
   { name: "Correlations", href: "/correlations", icon: ArrowsRightLeftIcon },
