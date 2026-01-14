@@ -24,7 +24,7 @@ export function WhatCouldGoWrong({ scenarios, isBeginnerMode }: Props) {
       </div>
 
       <p className="text-sm text-white/70 mb-4">
-        You don't need to predict the future. Just watch these key signals. If they change, adjust your
+        You don&apos;t need to predict the future. Just watch these key signals. If they change, adjust your
         strategy accordingly:
       </p>
 
@@ -39,7 +39,7 @@ export function WhatCouldGoWrong({ scenarios, isBeginnerMode }: Props) {
 
       <div className="mt-4 bg-white/5 rounded-lg p-3 border border-white/10">
         <p className="text-xs text-white/70">
-          <span className="font-semibold text-white">Remember:</span> Markets don't move in straight lines.
+          <span className="font-semibold text-white">Remember:</span> Markets don&apos;t move in straight lines.
           These triggers help you stay disciplined instead of emotional.
         </p>
       </div>

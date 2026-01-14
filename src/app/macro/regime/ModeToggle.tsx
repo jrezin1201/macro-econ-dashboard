@@ -13,21 +13,21 @@ interface Props {
 }
 
 export function ModeToggle({ onChange }: Props) {
-  const [isBeginnerMode, setIsBeginnerMode] = useState(true); // Default to beginner
-
-  // Load preference from localStorage on mount
-  useEffect(() => {
+  // Initialize state from localStorage (lazy initializer)
+  const [isBeginnerMode, setIsBeginnerMode] = useState(() => {
+    if (typeof window === 'undefined') return true;
     const stored = localStorage.getItem("macroRegimeMode");
-    if (stored !== null) {
-      const beginnerMode = stored === "beginner";
-      setIsBeginnerMode(beginnerMode);
-      onChange?.(beginnerMode);
-    } else {
-      // Default to beginner for new users
+    if (stored === null) {
       localStorage.setItem("macroRegimeMode", "beginner");
-      onChange?.(true);
+      return true;
     }
-  }, [onChange]);
+    return stored === "beginner";
+  });
+
+  // Notify parent of initial mode
+  useEffect(() => {
+    onChange?.(isBeginnerMode);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleToggle = (mode: "beginner" | "expert") => {
     const beginnerMode = mode === "beginner";
@@ -66,12 +66,12 @@ export function ModeToggle({ onChange }: Props) {
  * Hook to get current mode
  */
 export function useBeginnerMode(): boolean {
-  const [isBeginnerMode, setIsBeginnerMode] = useState(true);
-
-  useEffect(() => {
+  // Initialize state from localStorage (lazy initializer)
+  const [isBeginnerMode] = useState(() => {
+    if (typeof window === 'undefined') return true;
     const stored = localStorage.getItem("macroRegimeMode");
-    setIsBeginnerMode(stored !== "expert");
-  }, []);
+    return stored !== "expert";
+  });
 
   return isBeginnerMode;
 }

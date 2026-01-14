@@ -8,7 +8,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { navSections, type NavItem } from "@/lib/nav/navItems";
+import { navSections } from "@/lib/nav/navItems";
 
 interface Props {
   open: boolean;

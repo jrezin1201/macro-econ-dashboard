@@ -25,8 +25,6 @@ import type { LayerDelta, LayerWeights } from "@/lib/portfolio/portfolioStore";
 import type { ActionPolicy } from "@/lib/portfolio/actionPolicy";
 import { formatFetchTime } from "@/lib/data/fetchWithMeta";
 import {
-  explainRegime,
-  explainAlertLevel,
   explainBTCTrend,
   explainMicrostress,
   explainBreadth,

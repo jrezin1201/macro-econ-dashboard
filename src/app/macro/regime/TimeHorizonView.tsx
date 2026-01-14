@@ -26,7 +26,7 @@ export function TimeHorizonView({ sixMonth, twelveMonth, twoToThreeYear, isBegin
       </div>
 
       <p className="text-sm text-white/70 mb-4">
-        Short-term signals don't always match long-term trends. Here's what current conditions suggest for
+        Short-term signals don&apos;t always match long-term trends. Here&apos;s what current conditions suggest for
         different time horizons:
       </p>
 

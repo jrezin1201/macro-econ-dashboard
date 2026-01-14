@@ -114,8 +114,8 @@ export function ExplanationSidebar() {
         <div className="bg-blue-900/20 rounded-lg border border-blue-500/30 p-4">
           <p className="text-xs text-blue-300 font-semibold mb-2">💡 Pro Tip</p>
           <p className="text-xs text-white/70">
-            You don't need to predict the future. Just follow the signals, adjust when they change, and stay diversified.
-            That's 90% of successful macro investing.
+            You don&apos;t need to predict the future. Just follow the signals, adjust when they change, and stay diversified.
+            That&apos;s 90% of successful macro investing.
           </p>
         </div>
       </div>
