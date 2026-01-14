@@ -6,27 +6,24 @@
  * Main content for the comprehensive dashboard guide
  */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { TableOfContents } from "@/components/guide/TableOfContents";
 import { IndicatorExplainer } from "@/components/guide/IndicatorExplainer";
 
 export function GuideContent() {
-  const [isPrintMode, setIsPrintMode] = useState(false);
-  const [isBeginnerMode, setIsBeginnerMode] = useState(true);
-
-  useEffect(() => {
-    // Check for print mode in URL
+  // Initialize print mode from URL params (lazy initializer)
+  const [isPrintMode] = useState(() => {
+    if (typeof window === 'undefined') return false;
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get("print") === "1") {
-      setIsPrintMode(true);
-    }
+    return urlParams.get("print") === "1";
+  });
 
-    // Load beginner/expert preference
+  // Initialize beginner mode from localStorage (lazy initializer)
+  const [isBeginnerMode, setIsBeginnerMode] = useState(() => {
+    if (typeof window === 'undefined') return true;
     const stored = localStorage.getItem("guideMode");
-    if (stored === "expert") {
-      setIsBeginnerMode(false);
-    }
-  }, []);
+    return stored !== "expert";
+  });
 
   const toggleMode = (beginner: boolean) => {
     setIsBeginnerMode(beginner);
