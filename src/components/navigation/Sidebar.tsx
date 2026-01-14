@@ -2,42 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+import { MobileNavDrawer } from "@/components/nav/MobileNavDrawer";
 import {
-  HomeIcon,
-  MagnifyingGlassIcon,
-  ChartBarIcon,
-  ArrowsRightLeftIcon,
-  BeakerIcon,
-  GlobeAltIcon,
-  CurrencyDollarIcon,
-} from "@heroicons/react/24/outline";
-import { useState } from "react";
-
-const navigation = [
-  { name: "Dashboard", href: "/", icon: HomeIcon },
-  { name: "Data Explorer", href: "/explore", icon: MagnifyingGlassIcon },
-  { name: "Chart Builder", href: "/charts", icon: ChartBarIcon },
-  { name: "Correlations", href: "/correlations", icon: ArrowsRightLeftIcon },
-  { name: "Custom Analysis", href: "/analysis", icon: BeakerIcon },
-];
-
-const macroNavigation = [
-  { name: "Macro Regime", href: "/macro/regime", icon: BeakerIcon },
-  { name: "Equity Breadth", href: "/macro/breadth", icon: ChartBarIcon },
-  { name: "Credit Microstress", href: "/macro/microstress", icon: BeakerIcon },
-  { name: "Bitcoin Analysis", href: "/bitcoin", icon: CurrencyDollarIcon },
-  { name: "U.S. Macro", href: "/macro/us", icon: HomeIcon },
-];
-
-const devTabsNavigation = [
-  { name: "Global Macro", href: "/macro/global", icon: GlobeAltIcon },
-  { name: "China Macro", href: "/macro/china", icon: GlobeAltIcon },
-  { name: "India Macro", href: "/macro/india", icon: GlobeAltIcon },
-  { name: "Europe Macro", href: "/macro/europe", icon: GlobeAltIcon },
-  { name: "Bitcoin (FRED)", href: "/macro/bitcoin", icon: CurrencyDollarIcon },
-  { name: "Blockchain.com", href: "/blockchain", icon: CurrencyDollarIcon },
-  { name: "MCP Data Sources", href: "/mcp", icon: GlobeAltIcon },
-];
+  mainNavigation,
+  macroNavigation,
+  devTabsNavigation,
+  allNavItems,
+} from "@/lib/nav/navItems";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -60,7 +32,7 @@ export function Sidebar() {
             {/* Main Navigation */}
             <li>
               <ul role="list" className="-mx-2 space-y-1">
-                {navigation.map((item) => {
+                {mainNavigation.map((item) => {
                   const isActive = pathname === item.href;
                   return (
                     <li key={item.name}>
@@ -210,11 +182,55 @@ export function Sidebar() {
 }
 
 export function MobileSidebar() {
+  const pathname = usePathname();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  // Lock body scroll when mobile nav is open
+  useEffect(() => {
+    if (mobileNavOpen) {
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "";
+      };
+    }
+  }, [mobileNavOpen]);
+
+  // Find current page name
+  const currentPageName = allNavItems.find(item => item.href === pathname)?.name || "Finance Dashboard";
+
   return (
-    <div className="lg:hidden">
-      <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-white/10 bg-gray-900/95 backdrop-blur-sm px-4 shadow-sm">
-        <h1 className="text-lg font-bold text-white">Finance Dashboard</h1>
+    <>
+      <div className="lg:hidden">
+        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-white/10 bg-gray-900/95 backdrop-blur-sm px-4 shadow-sm">
+          {/* Hamburger Button */}
+          <button
+            onClick={() => setMobileNavOpen(true)}
+            className="text-white/80 hover:text-white p-2 -ml-2"
+            aria-label="Open menu"
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
+          {/* Page Title */}
+          <h1 className="flex-1 text-sm md:text-base font-semibold text-white truncate">
+            {currentPageName}
+          </h1>
+
+          {/* Last Updated Badge (placeholder for now) */}
+          <div className="text-xs text-white/50">
+            {/* Will add update timestamp here */}
+          </div>
+        </div>
       </div>
-    </div>
+
+      {/* Mobile Navigation Drawer */}
+      <MobileNavDrawer
+        open={mobileNavOpen}
+        onClose={() => setMobileNavOpen(false)}
+        currentPath={pathname}
+      />
+    </>
   );
 }

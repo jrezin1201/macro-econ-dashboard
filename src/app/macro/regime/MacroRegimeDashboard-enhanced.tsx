@@ -20,8 +20,10 @@ import { ExplanationSidebar } from "./ExplanationSidebar";
 import { ExplanationBadge } from "./ExplanationBadge";
 import { WhatCouldGoWrong } from "./WhatCouldGoWrong";
 import { TimeHorizonView } from "./TimeHorizonView";
+import { DataFreshnessPanel } from "./DataFreshnessPanel";
 import type { LayerDelta, LayerWeights } from "@/lib/portfolio/portfolioStore";
 import type { ActionPolicy } from "@/lib/portfolio/actionPolicy";
+import { formatFetchTime } from "@/lib/data/fetchWithMeta";
 import {
   explainRegime,
   explainAlertLevel,
@@ -211,7 +213,7 @@ export function MacroRegimeDashboard({ data }: Props) {
             Rule-based regime classification + portfolio tilt guidance + confirmation layers
           </p>
           <p className="text-white/40 text-xs md:text-sm mt-1">
-            Last updated: {lastUpdated.toLocaleString()}
+            Last updated: {formatFetchTime(lastUpdated)}
           </p>
         </div>
 
@@ -600,6 +602,9 @@ export function MacroRegimeDashboard({ data }: Props) {
               </ul>
             </div>
           )}
+
+          {/* Data Freshness Panel */}
+          <DataFreshnessPanel indicators={indicators} />
         </div>
       </div>
       </div>

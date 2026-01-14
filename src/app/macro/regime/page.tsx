@@ -37,6 +37,9 @@ import { getMicrostressSeriesId } from "@/lib/macro/microstressConfig";
 import { getPortfolio, computeLayerWeights, computeDeltaFromTargets } from "@/lib/portfolio/portfolioStore";
 import { getActionPolicy } from "@/lib/portfolio/actionPolicy";
 
+// Import data tracking
+import { recordFetchTime, getMostRecentFetchTime } from "@/lib/data/fetchWithMeta";
+
 import { MacroRegimeDashboard } from "./MacroRegimeDashboard-enhanced";
 
 /**
@@ -47,10 +50,16 @@ async function fetchMacroData() {
   fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
   const startDate = fiveYearsAgo.toISOString().split("T")[0];
 
+  // Record fetch timestamp
+  const fetchTimestamp = new Date();
+
   // Fetch all series (gracefully handle failures)
   const fetchSeries = async (id: string): Promise<TimeSeriesDataPoint[]> => {
     try {
-      return await getSeriesData(id, { observationStart: startDate });
+      const data = await getSeriesData(id, { observationStart: startDate });
+      // Record successful fetch time
+      recordFetchTime(id, fetchTimestamp);
+      return data;
     } catch (error) {
       console.warn(`Failed to fetch ${id}:`, error);
       return [];
@@ -320,13 +329,28 @@ async function fetchMacroData() {
     }
   );
 
+  // Calculate most recent fetch time across all series
+  const allSeriesIds = [
+    "FEDFUNDS", "DGS2", "DGS10", "UMCSENT", "INDPRO", "PAYEMS", "ICSA",
+    "CPILFESL", "PCEPILFE", "T5YIE", "BAMLH0A0HYM2", "STLFSI4",
+    "WALCL", "WRESBAL", "RRPONTSYD", "WTREGEN", "DTWEXBGS", "VIXCLS", "SP500",
+    BITCOIN_CONFIG.fredSeriesId,
+    getMicrostressSeriesId("sofr"),
+    getMicrostressSeriesId("effr"),
+    getMicrostressSeriesId("tbill3m"),
+    getMicrostressSeriesId("cpRate"),
+    getMicrostressSeriesId("tedSpread"),
+    getMicrostressSeriesId("nfci"),
+  ];
+  const lastUpdated = getMostRecentFetchTime(allSeriesIds) || new Date();
+
   return {
     regime,
     alert,
     tilts,
     composites,
     indicators,
-    lastUpdated: new Date(),
+    lastUpdated,
     rates: {
       fedfunds: fedfundsVal,
       dgs2: dgs2Val,
