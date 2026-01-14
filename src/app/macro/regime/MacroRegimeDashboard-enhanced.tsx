@@ -201,6 +201,30 @@ export function MacroRegimeDashboard({ data: initialData }: Props) {
   // Beginner Mode state
   const [isBeginnerMode, setIsBeginnerMode] = useState(true);
 
+  // Breadcrumb currentKey based on URL hash
+  const [breadcrumbKey, setBreadcrumbKey] = useState<string>("macro");
+
+  // Detect URL hash changes for breadcrumb highlighting
+  useEffect(() => {
+    const updateBreadcrumbKey = () => {
+      const hash = window.location.hash;
+      if (hash === "#confirmations") {
+        setBreadcrumbKey("confirmations");
+      } else if (hash === "#action") {
+        setBreadcrumbKey("action");
+      } else {
+        setBreadcrumbKey("macro");
+      }
+    };
+
+    // Set initial key
+    updateBreadcrumbKey();
+
+    // Listen for hash changes
+    window.addEventListener("hashchange", updateBreadcrumbKey);
+    return () => window.removeEventListener("hashchange", updateBreadcrumbKey);
+  }, []);
+
   // Auto-refresh
   const fetchData = useCallback(async () => {
     try {
@@ -259,7 +283,37 @@ export function MacroRegimeDashboard({ data: initialData }: Props) {
 
       <div className="max-w-7xl mx-auto px-3 md:px-6 lg:px-8 space-y-6">
         {/* Workflow Breadcrumb */}
-        <WorkflowBreadcrumb currentKey="macro" />
+        <WorkflowBreadcrumb currentKey={breadcrumbKey} />
+
+        {/* Quick Jump Links */}
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="text-white/50">Jump to:</span>
+          <button
+            onClick={() => {
+              const element = document.querySelector("#confirmations");
+              if (element) {
+                element.scrollIntoView({ behavior: "smooth", block: "start" });
+                window.history.pushState(null, "", "#confirmations");
+              }
+            }}
+            className="text-blue-400 hover:text-blue-300 underline"
+          >
+            Confirmations
+          </button>
+          <span className="text-white/30">•</span>
+          <button
+            onClick={() => {
+              const element = document.querySelector("#action");
+              if (element) {
+                element.scrollIntoView({ behavior: "smooth", block: "start" });
+                window.history.pushState(null, "", "#action");
+              }
+            }}
+            className="text-blue-400 hover:text-blue-300 underline"
+          >
+            This Week Actions
+          </button>
+        </div>
 
         {/* Header with Mode Toggle and Refresh */}
         <div className="text-center relative">
@@ -402,7 +456,7 @@ export function MacroRegimeDashboard({ data: initialData }: Props) {
         <div className="lg:col-span-2 space-y-6 lg:order-1">
           {/* This Week Actions - Priority #1 on mobile */}
           {portfolio && (
-            <div className="lg:hidden">
+            <div id="action" className="lg:hidden">
               <ThisWeekActionsPlaybook
                 actionPolicy={portfolio.actionPolicy}
                 isBeginnerMode={isBeginnerMode}
@@ -465,7 +519,7 @@ export function MacroRegimeDashboard({ data: initialData }: Props) {
           </div>
 
           {/* NEW: Confirmation Layers Summary */}
-          <div className="bg-blue-900/20 rounded-lg border border-blue-500/30 p-3 md:p-6">
+          <div id="confirmations" className="bg-blue-900/20 rounded-lg border border-blue-500/30 p-3 md:p-6">
             <h2 className="text-lg md:text-xl font-bold text-white mb-4">Confirmation Layers</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {breadth && (
@@ -554,7 +608,7 @@ export function MacroRegimeDashboard({ data: initialData }: Props) {
         <div className="space-y-6 lg:order-2">
           {/* NEW: This Week Actions Panel - Desktop only (mobile shows above) */}
           {portfolio && (
-            <div className="hidden lg:block">
+            <div id="action" className="hidden lg:block">
               <ThisWeekActionsPlaybook
                 actionPolicy={portfolio.actionPolicy}
                 isBeginnerMode={isBeginnerMode}

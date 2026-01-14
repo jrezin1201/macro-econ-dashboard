@@ -8,6 +8,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export interface WorkflowStep {
   key: string;
@@ -26,11 +27,30 @@ export const WORKFLOW_STEPS: WorkflowStep[] = [
   { key: "macro", label: "Macro Regime", href: "/macro/regime" },
   { key: "engines", label: "Economic Engines", href: "/engines" },
   { key: "confirmations", label: "Confirmations", href: "/macro/regime#confirmations" },
-  { key: "action", label: "Action", href: "/macro/regime#this-week-actions" },
+  { key: "action", label: "Action", href: "/macro/regime#action" },
 ];
 
 export function WorkflowBreadcrumb({ currentKey, variant = "full" }: Props) {
   const currentIndex = WORKFLOW_STEPS.findIndex((step) => step.key === currentKey);
+  const pathname = usePathname();
+
+  // Handle smooth scroll for anchor links on the same page
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    const url = new URL(href, window.location.origin);
+    const hash = url.hash;
+
+    // If there's a hash and we're on the same page, smooth scroll instead of navigating
+    if (hash && pathname === url.pathname) {
+      e.preventDefault();
+      const element = document.querySelector(hash);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+        // Update URL hash without triggering navigation
+        window.history.pushState(null, "", hash);
+      }
+    }
+    // Otherwise, let Next.js Link handle the navigation
+  };
 
   return (
     <div className="mb-6">
@@ -46,6 +66,7 @@ export function WorkflowBreadcrumb({ currentKey, variant = "full" }: Props) {
               {/* Step Pill */}
               <Link
                 href={step.href}
+                onClick={(e) => handleClick(e, step.href)}
                 className={`
                   px-3 py-1.5 rounded-full text-xs md:text-sm font-medium transition-all
                   ${
