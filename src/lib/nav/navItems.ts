@@ -14,6 +14,15 @@ import {
   CurrencyDollarIcon,
   DocumentTextIcon,
   BookOpenIcon,
+  BuildingOffice2Icon,
+  DocumentChartBarIcon,
+  ShieldCheckIcon,
+  BanknotesIcon,
+  TruckIcon,
+  NewspaperIcon,
+  SignalIcon,
+  LightBulbIcon,
+  ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
 
 export interface NavItem {
@@ -47,6 +56,20 @@ export const macroNavigation: NavItem[] = [
   { name: "U.S. Macro", href: "/macro/us", icon: HomeIcon },
 ];
 
+// Company Analysis section
+export const companyNavigation: NavItem[] = [
+  { name: "Company Search", href: "/company", icon: MagnifyingGlassIcon },
+  { name: "Overview", href: "/company/AAPL/overview", icon: BuildingOffice2Icon },
+  { name: "Financials", href: "/company/AAPL/financials", icon: DocumentChartBarIcon },
+  { name: "Quality & Returns", href: "/company/AAPL/quality", icon: ShieldCheckIcon },
+  { name: "Capital Allocation", href: "/company/AAPL/capital", icon: BanknotesIcon },
+  { name: "Supply Chain", href: "/company/AAPL/supply-chain", icon: TruckIcon },
+  { name: "Macro Sensitivity", href: "/company/AAPL/macro-news", icon: NewspaperIcon },
+  { name: "Positioning", href: "/company/AAPL/positioning", icon: SignalIcon },
+  { name: "Scenarios", href: "/company/AAPL/scenarios", icon: LightBulbIcon },
+  { name: "Report", href: "/company/AAPL/report", icon: ClipboardDocumentListIcon },
+];
+
 // Dev Tabs section
 export const devTabsNavigation: NavItem[] = [
   { name: "Data Sources", href: "/data-sources", icon: DocumentTextIcon },
@@ -72,6 +95,11 @@ export const navSections: NavSection[] = [
     defaultExpanded: true,
   },
   {
+    title: "Company Analysis",
+    items: companyNavigation,
+    defaultExpanded: true,
+  },
+  {
     title: "Dev Tabs",
     items: devTabsNavigation,
     defaultExpanded: false,
@@ -82,5 +110,6 @@ export const navSections: NavSection[] = [
 export const allNavItems: NavItem[] = [
   ...mainNavigation,
   ...macroNavigation,
+  ...companyNavigation,
   ...devTabsNavigation,
 ];
