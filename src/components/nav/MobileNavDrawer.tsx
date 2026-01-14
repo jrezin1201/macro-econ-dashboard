@@ -19,6 +19,7 @@ interface Props {
 export function MobileNavDrawer({ open, onClose, currentPath }: Props) {
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     "Main": true,
+    "Portfolio & Engines": true,
     "Macro Analysis": true,
     "Company Analysis": true,
     "Dev Tabs": false,

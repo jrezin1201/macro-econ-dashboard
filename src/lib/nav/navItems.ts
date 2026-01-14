@@ -23,6 +23,8 @@ import {
   SignalIcon,
   LightBulbIcon,
   ClipboardDocumentListIcon,
+  BriefcaseIcon,
+  Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 
 export interface NavItem {
@@ -54,6 +56,12 @@ export const macroNavigation: NavItem[] = [
   { name: "Credit Microstress", href: "/macro/microstress", icon: BeakerIcon },
   { name: "Bitcoin Analysis", href: "/bitcoin", icon: CurrencyDollarIcon },
   { name: "U.S. Macro", href: "/macro/us", icon: HomeIcon },
+];
+
+// Portfolio & Engines section
+export const portfolioNavigation: NavItem[] = [
+  { name: "Portfolio", href: "/portfolio", icon: BriefcaseIcon },
+  { name: "Economic Engines", href: "/engines", icon: Cog6ToothIcon },
 ];
 
 // Company Analysis section
@@ -90,6 +98,11 @@ export const navSections: NavSection[] = [
     defaultExpanded: true,
   },
   {
+    title: "Portfolio & Engines",
+    items: portfolioNavigation,
+    defaultExpanded: true,
+  },
+  {
     title: "Macro Analysis",
     items: macroNavigation,
     defaultExpanded: true,
@@ -109,6 +122,7 @@ export const navSections: NavSection[] = [
 // Flatten all nav items for easy searching
 export const allNavItems: NavItem[] = [
   ...mainNavigation,
+  ...portfolioNavigation,
   ...macroNavigation,
   ...companyNavigation,
   ...devTabsNavigation,
