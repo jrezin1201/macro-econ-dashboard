@@ -6,6 +6,8 @@
  */
 
 import { EnginesClient } from "@/components/engines/EnginesClient";
+import { WorkflowBreadcrumb } from "@/components/workflow/WorkflowBreadcrumb";
+import { PagePurpose, PAGE_PURPOSES } from "@/components/workflow/PagePurpose";
 
 export const metadata = {
   title: "Economic Engines | Finance Dashboard",
@@ -16,12 +18,13 @@ export default function EnginesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/20 to-gray-900 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
+        {/* Workflow Breadcrumb */}
+        <WorkflowBreadcrumb currentKey="engines" />
+
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Economic Engines</h1>
-          <p className="text-white/60">
-            12 ways to express risk, mapped to current macro conditions
-          </p>
+          <PagePurpose purpose={PAGE_PURPOSES.engines} />
         </div>
 
         {/* Client-side Engines UI */}

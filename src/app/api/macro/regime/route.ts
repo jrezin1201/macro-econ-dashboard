@@ -264,46 +264,55 @@ export async function GET() {
     ];
     const lastUpdated = getMostRecentFetchTime(allSeriesIds) || new Date();
 
-    return NextResponse.json({
-      regime,
-      alert,
-      tilts,
-      composites,
-      indicators,
-      lastUpdated: lastUpdated.toISOString(),
-      rates: { fedfunds: fedfundsVal, dgs2: dgs2Val, dgs10: dgs10Val, curve10_2 },
-      credit: { hyOAS: hyOASVal, hyOAS_8wChange, stlFSI: stlFSIVal },
-      liquidity: { composite: composites.liquidityImpulse, walcl_13wChange },
-      breadth: breadthAnalysis,
-      bitcoin: { analysis: btcAnalysis, guidance: mstrGuidance },
-      microstress: microstressAnalysis,
-      portfolio: {
-        useDemoHoldings: portfolio.useDemoHoldings,
-        layerWeights,
-        layerDeltas,
-        actionPolicy,
+    return NextResponse.json(
+      {
+        regime,
+        alert,
+        tilts,
+        composites,
+        indicators,
+        lastUpdated: lastUpdated.toISOString(),
+        rates: { fedfunds: fedfundsVal, dgs2: dgs2Val, dgs10: dgs10Val, curve10_2 },
+        credit: { hyOAS: hyOASVal, hyOAS_8wChange, stlFSI: stlFSIVal },
+        liquidity: { composite: composites.liquidityImpulse, walcl_13wChange },
+        breadth: breadthAnalysis,
+        bitcoin: { analysis: btcAnalysis, guidance: mstrGuidance },
+        microstress: microstressAnalysis,
+        portfolio: {
+          useDemoHoldings: portfolio.useDemoHoldings,
+          layerWeights,
+          layerDeltas,
+          actionPolicy,
+        },
+        // Add raw time series data for charts
+        chartData: {
+          rates: {
+            fedfunds,
+            dgs2,
+            dgs10,
+          },
+          growth: {
+            sentiment,
+            payems,
+          },
+          inflation: {
+            cpi,
+            pce,
+          },
+          credit: {
+            hyOAS,
+            stlFSI,
+          },
+        },
       },
-      // Add raw time series data for charts
-      chartData: {
-        rates: {
-          fedfunds,
-          dgs2,
-          dgs10,
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+          "Pragma": "no-cache",
+          "Expires": "0",
         },
-        growth: {
-          sentiment,
-          payems,
-        },
-        inflation: {
-          cpi,
-          pce,
-        },
-        credit: {
-          hyOAS,
-          stlFSI,
-        },
-      },
-    });
+      }
+    );
   } catch (error) {
     console.error("Macro regime API error:", error);
     return NextResponse.json(
@@ -312,3 +321,7 @@ export async function GET() {
     );
   }
 }
+
+// Disable Next.js caching
+export const dynamic = "force-dynamic";
+export const revalidate = 0;

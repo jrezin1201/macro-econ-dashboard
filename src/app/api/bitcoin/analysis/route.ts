@@ -1,29 +1,26 @@
 /**
  * Bitcoin Analysis API Route
+ * Now using Blockchain.com for real-time data
  */
 
 import { NextResponse } from "next/server";
-import { getSeriesData } from "@/modules/fred-api/lib/fred-client";
+import { getChartData, getTicker } from "@/modules/blockchain/lib/blockchain-api";
 import { analyzeBitcoinTrend, generateMSTRGuidance } from "@/lib/crypto/bitcoinCalc";
 import type { BitcoinPrice } from "@/lib/crypto/bitcoinTypes";
-import { BITCOIN_CONFIG } from "@/lib/crypto/bitcoinConfig";
 
 export async function GET() {
   try {
-    const fiveYearsAgo = new Date();
-    fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
-    const startDate = fiveYearsAgo.toISOString().split("T")[0];
+    // Fetch historical Bitcoin prices from Blockchain.com (last year)
+    const chartData = await getChartData("market-price", "1year");
 
-    // Fetch Bitcoin price from FRED
-    const btcData = await getSeriesData(BITCOIN_CONFIG.fredSeriesId, {
-      observationStart: startDate,
+    // Convert Blockchain.com format to BitcoinPrice format
+    const prices: BitcoinPrice[] = chartData.values.map((point) => {
+      const date = new Date(point.x * 1000); // Convert Unix timestamp to Date
+      return {
+        date: date.toISOString().split("T")[0],
+        price: point.y,
+      };
     });
-
-    // Convert to BitcoinPrice format
-    const prices: BitcoinPrice[] = btcData.map((point) => ({
-      date: point.dateString,
-      price: point.value,
-    }));
 
     // Analyze
     const analysis = analyzeBitcoinTrend(prices);
@@ -31,14 +28,23 @@ export async function GET() {
     // Generate MSTR guidance (default to Risk-On for standalone page)
     const mstrGuidance = generateMSTRGuidance("Risk-On", analysis.trendLevel);
 
-    return NextResponse.json({
-      analysis: {
-        ...analysis,
-        lastUpdated: analysis.lastUpdated.toISOString(),
+    return NextResponse.json(
+      {
+        analysis: {
+          ...analysis,
+          lastUpdated: analysis.lastUpdated.toISOString(),
+        },
+        mstrGuidance,
+        prices,
       },
-      mstrGuidance,
-      prices,
-    });
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+          "Pragma": "no-cache",
+          "Expires": "0",
+        },
+      }
+    );
   } catch (error) {
     console.error("Bitcoin analysis API error:", error);
     return NextResponse.json(
@@ -47,3 +53,7 @@ export async function GET() {
     );
   }
 }
+
+// Disable Next.js caching
+export const dynamic = "force-dynamic";
+export const revalidate = 0;

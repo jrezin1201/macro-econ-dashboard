@@ -7,22 +7,27 @@ import { useState, useEffect } from "react";
 import { MobileNavDrawer } from "@/components/nav/MobileNavDrawer";
 import { PortfolioStatusPill } from "@/components/portfolio/PortfolioStatusPill";
 import { PortfolioQuickDrawer } from "@/components/portfolio/PortfolioQuickDrawer";
-import {
-  mainNavigation,
-  weeklyWorkflowNavigation,
-  analysisToolsNavigation,
-  companyNavigation,
-  devTabsNavigation,
-  allNavItems,
-} from "@/lib/nav/navItems";
+import { NAV_GROUPS, findNavItem } from "@/lib/nav/navConfig";
 
 export function Sidebar() {
   const pathname = usePathname();
-  const [weeklyWorkflowExpanded, setWeeklyWorkflowExpanded] = useState(true);
-  const [analysisToolsExpanded, setAnalysisToolsExpanded] = useState(false);
-  const [companyExpanded, setCompanyExpanded] = useState(false);
-  const [devTabsExpanded, setDevTabsExpanded] = useState(false);
   const [portfolioDrawerOpen, setPortfolioDrawerOpen] = useState(false);
+
+  // Track expanded state for each group
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    NAV_GROUPS.forEach((group) => {
+      initial[group.label] = group.defaultOpen ?? true;
+    });
+    return initial;
+  });
+
+  const toggleGroup = (groupLabel: string) => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [groupLabel]: !prev[groupLabel],
+    }));
+  };
 
   return (
     <div>
@@ -41,230 +46,81 @@ export function Sidebar() {
           {/* Navigation */}
           <nav className="flex flex-1 flex-col">
             <ul role="list" className="flex flex-1 flex-col gap-y-7">
-              {/* Start Here Section */}
-              <li>
-                <div className="text-xs font-semibold leading-6 text-gray-400 mb-2">START HERE</div>
-                <ul role="list" className="-mx-2 space-y-1">
-                  {mainNavigation.map((item) => {
-                    const isActive = pathname === item.href;
-                    return (
-                      <li key={item.name}>
-                        <Link
-                          href={item.href}
-                          className={`
-                            group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all
-                            ${
-                              isActive
-                                ? "bg-blue-600 text-white"
-                                : "text-gray-300 hover:text-white hover:bg-white/10"
-                            }
-                          `}
+              {NAV_GROUPS.map((group) => {
+                const isExpanded = expandedGroups[group.label] ?? true;
+                const hasToggle = group.collapsible !== false && group.items.length > 0;
+
+                return (
+                  <li key={group.label}>
+                    {/* Group Header */}
+                    {hasToggle ? (
+                      <button
+                        onClick={() => toggleGroup(group.label)}
+                        className="flex items-center justify-between w-full text-xs font-semibold leading-6 text-gray-400 hover:text-white transition-colors"
+                        aria-expanded={isExpanded}
+                        aria-controls={`nav-group-${group.label}`}
+                      >
+                        {group.label}
+                        <svg
+                          className={`h-5 w-5 transition-transform ${isExpanded ? "rotate-90" : ""}`}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
                         >
-                          <item.icon
-                            className={`h-6 w-6 shrink-0 ${
-                              isActive ? "text-white" : "text-gray-400 group-hover:text-white"
-                            }`}
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </li>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    ) : (
+                      <div className="text-xs font-semibold leading-6 text-gray-400 mb-2">
+                        {group.label}
+                      </div>
+                    )}
 
-              {/* Weekly Workflow Section */}
-              <li>
-                <button
-                  onClick={() => setWeeklyWorkflowExpanded(!weeklyWorkflowExpanded)}
-                  className="flex items-center justify-between w-full text-xs font-semibold leading-6 text-gray-400 hover:text-white"
-                >
-                  WEEKLY WORKFLOW
-                  <svg
-                    className={`h-5 w-5 transition-transform ${weeklyWorkflowExpanded ? "rotate-90" : ""}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-                {weeklyWorkflowExpanded && (
-                  <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {weeklyWorkflowNavigation.map((item) => {
-                      const isActive = pathname === item.href;
-                      return (
-                        <li key={item.name}>
-                          <Link
-                            href={item.href}
-                            className={`
-                              group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all
-                              ${
-                                isActive
-                                  ? "bg-blue-600 text-white"
-                                  : "text-gray-300 hover:text-white hover:bg-white/10"
-                              }
-                            `}
-                          >
-                            <item.icon
-                              className={`h-6 w-6 shrink-0 ${
-                                isActive ? "text-white" : "text-gray-400 group-hover:text-white"
-                              }`}
-                              aria-hidden="true"
-                            />
-                            {item.name}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-              </li>
-
-              {/* Analysis Tools Section */}
-              <li>
-                <button
-                  onClick={() => setAnalysisToolsExpanded(!analysisToolsExpanded)}
-                  className="flex items-center justify-between w-full text-xs font-semibold leading-6 text-gray-400 hover:text-white"
-                >
-                  ANALYSIS TOOLS
-                  <svg
-                    className={`h-5 w-5 transition-transform ${analysisToolsExpanded ? "rotate-90" : ""}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-                {analysisToolsExpanded && (
-                  <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {analysisToolsNavigation.map((item) => {
-                      const isActive = pathname === item.href;
-                      return (
-                        <li key={item.name}>
-                          <Link
-                            href={item.href}
-                            className={`
-                              group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all
-                              ${
-                                isActive
-                                  ? "bg-blue-600 text-white"
-                                  : "text-gray-300 hover:text-white hover:bg-white/10"
-                              }
-                            `}
-                          >
-                            <item.icon
-                              className={`h-6 w-6 shrink-0 ${
-                                isActive ? "text-white" : "text-gray-400 group-hover:text-white"
-                              }`}
-                              aria-hidden="true"
-                            />
-                            {item.name}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-              </li>
-
-              {/* Company Analysis Section */}
-              <li>
-                <button
-                  onClick={() => setCompanyExpanded(!companyExpanded)}
-                  className="flex items-center justify-between w-full text-xs font-semibold leading-6 text-gray-400 hover:text-white"
-                >
-                  COMPANY ANALYSIS
-                  <svg
-                    className={`h-5 w-5 transition-transform ${companyExpanded ? "rotate-90" : ""}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-                {companyExpanded && (
-                  <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {companyNavigation.map((item) => {
-                      const isActive = pathname === item.href;
-                      return (
-                        <li key={item.name}>
-                          <Link
-                            href={item.href}
-                            className={`
-                              group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all
-                              ${
-                                isActive
-                                  ? "bg-blue-600 text-white"
-                                  : "text-gray-300 hover:text-white hover:bg-white/10"
-                              }
-                            `}
-                          >
-                            <item.icon
-                              className={`h-6 w-6 shrink-0 ${
-                                isActive ? "text-white" : "text-gray-400 group-hover:text-white"
-                              }`}
-                              aria-hidden="true"
-                            />
-                            {item.name}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-              </li>
-
-              {/* Dev Tabs Section */}
-              <li>
-                <button
-                  onClick={() => setDevTabsExpanded(!devTabsExpanded)}
-                  className="flex items-center justify-between w-full text-xs font-semibold leading-6 text-gray-400 hover:text-white"
-                >
-                  DEV TABS
-                  <svg
-                    className={`h-5 w-5 transition-transform ${devTabsExpanded ? "rotate-90" : ""}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-                {devTabsExpanded && (
-                  <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {devTabsNavigation.map((item) => {
-                      const isActive = pathname === item.href;
-                      return (
-                        <li key={item.name}>
-                          <Link
-                            href={item.href}
-                            className={`
-                              group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all
-                              ${
-                                isActive
-                                  ? "bg-blue-600 text-white"
-                                  : "text-gray-300 hover:text-white hover:bg-white/10"
-                              }
-                            `}
-                          >
-                            <item.icon
-                              className={`h-6 w-6 shrink-0 ${
-                                isActive ? "text-white" : "text-gray-400 group-hover:text-white"
-                              }`}
-                              aria-hidden="true"
-                            />
-                            {item.name}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-              </li>
+                    {/* Group Items */}
+                    {isExpanded && (
+                      <ul
+                        role="list"
+                        className="-mx-2 mt-2 space-y-1"
+                        id={`nav-group-${group.label}`}
+                      >
+                        {group.items.map((item) => {
+                          const isActive = pathname === item.href;
+                          return (
+                            <li key={item.href}>
+                              <Link
+                                href={item.href}
+                                className={`
+                                  group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all
+                                  ${
+                                    isActive
+                                      ? "bg-blue-600 text-white"
+                                      : "text-gray-300 hover:text-white hover:bg-white/10"
+                                  }
+                                `}
+                                aria-current={isActive ? "page" : undefined}
+                                title={item.description}
+                              >
+                                <item.icon
+                                  className={`h-6 w-6 shrink-0 ${
+                                    isActive ? "text-white" : "text-gray-400 group-hover:text-white"
+                                  }`}
+                                  aria-hidden="true"
+                                />
+                                {item.label}
+                                {item.badge && (
+                                  <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-xs font-medium text-white">
+                                    {item.badge}
+                                  </span>
+                                )}
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </li>
+                );
+              })}
 
               {/* Info Section */}
               <li className="mt-auto">
@@ -313,7 +169,8 @@ export function MobileSidebar() {
   }, [mobileNavOpen]);
 
   // Find current page name
-  const currentPageName = allNavItems.find(item => item.href === pathname)?.name || "Finance Dashboard";
+  const currentItem = findNavItem(pathname);
+  const currentPageName = currentItem?.label || "Finance Dashboard";
 
   return (
     <div>

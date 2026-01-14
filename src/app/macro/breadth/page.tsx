@@ -5,6 +5,8 @@
 import { breadthProvider } from "@/lib/market/breadthProvider";
 import { analyzeBreadth } from "@/lib/market/breadthCalc";
 import { getSeriesData } from "@/modules/fred-api/lib/fred-client";
+import { WorkflowBreadcrumb } from "@/components/workflow/WorkflowBreadcrumb";
+import { PagePurpose, PAGE_PURPOSES } from "@/components/workflow/PagePurpose";
 
 // Force dynamic rendering (no static generation at build time)
 export const dynamic = 'force-dynamic';
@@ -38,10 +40,13 @@ export default async function EquityBreadthPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
+      {/* Workflow Breadcrumb */}
+      <WorkflowBreadcrumb currentKey="confirmations" />
+
       {/* Header */}
       <div className="text-center">
         <h1 className="text-4xl font-bold text-white mb-2">Equity Breadth Analysis</h1>
-        <p className="text-white/60">Market breadth confirmation signals</p>
+        <PagePurpose purpose={PAGE_PURPOSES.breadth} className="text-center" />
         <p className="text-white/40 text-sm mt-1">
           Last updated: {analysis.lastUpdated.toLocaleString()}
         </p>

@@ -99,7 +99,6 @@ export const devTabsNavigation: NavItem[] = [
   { name: "China Macro", href: "/macro/china", icon: GlobeAltIcon },
   { name: "India Macro", href: "/macro/india", icon: GlobeAltIcon },
   { name: "Europe Macro", href: "/macro/europe", icon: GlobeAltIcon },
-  { name: "Bitcoin (FRED)", href: "/macro/bitcoin", icon: CurrencyDollarIcon },
   { name: "Blockchain.com", href: "/blockchain", icon: CurrencyDollarIcon },
   { name: "MCP Data Sources", href: "/mcp", icon: GlobeAltIcon },
 ];

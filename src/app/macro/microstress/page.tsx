@@ -6,6 +6,8 @@ import { getSeriesData } from "@/modules/fred-api/lib/fred-client";
 import { calculateMicrostressMetrics, analyzeMicrostress } from "@/lib/macro/microstressCalc";
 import { getMicrostressSeriesId, MICROSTRESS_CONFIG } from "@/lib/macro/microstressConfig";
 import type { TimeSeriesDataPoint } from "@/lib/macro/types";
+import { WorkflowBreadcrumb } from "@/components/workflow/WorkflowBreadcrumb";
+import { PagePurpose, PAGE_PURPOSES } from "@/components/workflow/PagePurpose";
 
 async function fetchMicrostressData() {
   const twoYearsAgo = new Date();
@@ -56,10 +58,13 @@ export default async function MicrostressPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
+      {/* Workflow Breadcrumb */}
+      <WorkflowBreadcrumb currentKey="confirmations" />
+
       {/* Header */}
       <div className="text-center">
         <h1 className="text-4xl font-bold text-white mb-2">Credit Microstress Analysis</h1>
-        <p className="text-white/60">Funding market plumbing + early warning signals</p>
+        <PagePurpose purpose={PAGE_PURPOSES.microstress} className="text-center" />
         <p className="text-white/40 text-sm mt-1">
           Last updated: {analysis.lastUpdated.toLocaleString()}
         </p>

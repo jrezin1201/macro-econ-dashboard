@@ -8,7 +8,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { navSections } from "@/lib/nav/navItems";
+import { NAV_GROUPS } from "@/lib/nav/navConfig";
 
 interface Props {
   open: boolean;
@@ -17,12 +17,12 @@ interface Props {
 }
 
 export function MobileNavDrawer({ open, onClose, currentPath }: Props) {
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    "Main": true,
-    "Portfolio & Engines": true,
-    "Macro Analysis": true,
-    "Company Analysis": true,
-    "Dev Tabs": false,
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    NAV_GROUPS.forEach((group) => {
+      initial[group.label] = group.defaultOpen ?? true;
+    });
+    return initial;
   });
 
   // Close on ESC key
@@ -80,18 +80,21 @@ export function MobileNavDrawer({ open, onClose, currentPath }: Props) {
 
         {/* Navigation Sections */}
         <nav className="p-4 space-y-6">
-          {navSections.map((section) => {
-            const isExpanded = expandedSections[section.title] ?? section.defaultExpanded ?? true;
+          {NAV_GROUPS.map((group) => {
+            const isExpanded = expandedSections[group.label] ?? group.defaultOpen ?? true;
+            const hasToggle = group.collapsible !== false;
 
             return (
-              <div key={section.title}>
+              <div key={group.label}>
                 {/* Section Header */}
-                {section.title !== "Main" && (
+                {hasToggle ? (
                   <button
-                    onClick={() => toggleSection(section.title)}
+                    onClick={() => toggleSection(group.label)}
                     className="flex items-center justify-between w-full text-xs font-semibold leading-6 text-gray-400 hover:text-white mb-2"
+                    aria-expanded={isExpanded}
+                    aria-controls={`mobile-nav-group-${group.label}`}
                   >
-                    {section.title}
+                    {group.label}
                     <svg
                       className={`h-5 w-5 transition-transform ${isExpanded ? "rotate-90" : ""}`}
                       fill="none"
@@ -101,15 +104,22 @@ export function MobileNavDrawer({ open, onClose, currentPath }: Props) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </button>
+                ) : (
+                  <div className="text-xs font-semibold leading-6 text-gray-400 mb-2">
+                    {group.label}
+                  </div>
                 )}
 
                 {/* Section Items */}
                 {isExpanded && (
-                  <ul className="space-y-1">
-                    {section.items.map((item) => {
+                  <ul
+                    className="space-y-1"
+                    id={`mobile-nav-group-${group.label}`}
+                  >
+                    {group.items.map((item) => {
                       const isActive = currentPath === item.href;
                       return (
-                        <li key={item.name}>
+                        <li key={item.href}>
                           <Link
                             href={item.href}
                             onClick={onClose} // Close drawer on navigation
@@ -121,6 +131,7 @@ export function MobileNavDrawer({ open, onClose, currentPath }: Props) {
                                   : "text-gray-300 hover:text-white hover:bg-white/10 active:bg-white/20"
                               }
                             `}
+                            aria-current={isActive ? "page" : undefined}
                           >
                             <item.icon
                               className={`h-6 w-6 shrink-0 ${
@@ -128,7 +139,12 @@ export function MobileNavDrawer({ open, onClose, currentPath }: Props) {
                               }`}
                               aria-hidden="true"
                             />
-                            {item.name}
+                            {item.label}
+                            {item.badge && (
+                              <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-xs font-medium text-white">
+                                {item.badge}
+                              </span>
+                            )}
                           </Link>
                         </li>
                       );

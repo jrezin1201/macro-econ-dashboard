@@ -29,6 +29,8 @@ import { recordRegimeSnapshot } from "@/lib/macro/regimeHistory";
 import type { LayerDelta, LayerWeights } from "@/lib/portfolio/portfolioStore";
 import type { ActionPolicy } from "@/lib/portfolio/actionPolicy";
 import { formatFetchTime } from "@/lib/data/fetchWithMeta";
+import { WorkflowBreadcrumb } from "@/components/workflow/WorkflowBreadcrumb";
+import { PagePurpose, PAGE_PURPOSES } from "@/components/workflow/PagePurpose";
 import {
   explainBTCTrend,
   explainMicrostress,
@@ -202,7 +204,10 @@ export function MacroRegimeDashboard({ data: initialData }: Props) {
   // Auto-refresh
   const fetchData = useCallback(async () => {
     try {
-      const res = await fetch("/api/macro/regime");
+      // Add cache-busting timestamp to force fresh data
+      const res = await fetch(`/api/macro/regime?t=${Date.now()}`, {
+        cache: "no-store",
+      });
       if (!res.ok) throw new Error("Failed to fetch");
       const newData = await res.json();
       setData({
@@ -253,6 +258,9 @@ export function MacroRegimeDashboard({ data: initialData }: Props) {
       {isBeginnerMode && <ExplanationSidebar />}
 
       <div className="max-w-7xl mx-auto px-3 md:px-6 lg:px-8 space-y-6">
+        {/* Workflow Breadcrumb */}
+        <WorkflowBreadcrumb currentKey="macro" />
+
         {/* Header with Mode Toggle and Refresh */}
         <div className="text-center relative">
           <div className="absolute right-0 top-0 hidden lg:block">
@@ -267,6 +275,7 @@ export function MacroRegimeDashboard({ data: initialData }: Props) {
           <div className="flex justify-center items-center gap-4 mb-3">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">Macro Regime Analysis</h1>
           </div>
+          <PagePurpose purpose={PAGE_PURPOSES.macroRegime} className="text-center" />
           <div className="flex flex-col md:flex-row justify-center items-center gap-3 mb-3">
             <ModeToggle onChange={setIsBeginnerMode} />
             <div className="lg:hidden">
@@ -285,6 +294,22 @@ export function MacroRegimeDashboard({ data: initialData }: Props) {
           <p className="text-white/40 text-xs md:text-sm mt-1">
             Last updated: {formatFetchTime(lastUpdated)}
           </p>
+        </div>
+
+        {/* Data Freshness Notice */}
+        <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-3 md:p-4">
+          <div className="flex items-start gap-2 md:gap-3">
+            <svg className="w-4 h-4 md:w-5 md:h-5 text-blue-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <h3 className="text-blue-200 font-semibold text-xs md:text-sm mb-1">Economic Data Timing</h3>
+              <p className="text-blue-200/80 text-xs">
+                FRED economic data updates with delays (1-2 days to several weeks depending on series).
+                This tool is designed for weekly strategic reviews, not intraday trading decisions.
+              </p>
+            </div>
+          </div>
         </div>
 
       {/* Enhanced Summary Cards - Responsive grid with mobile-first design */}

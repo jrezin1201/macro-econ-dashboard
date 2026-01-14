@@ -83,7 +83,7 @@ export async function getBlockchainStats(): Promise<BlockchainStats> {
  */
 export async function getTicker(currency: string = "USD"): Promise<TickerPrice> {
   const response = await fetch(`${BLOCKCHAIN_API}/ticker`, {
-    next: { revalidate: 30 }, // Cache for 30 seconds
+    cache: "no-store", // No cache for real-time data
   });
 
   if (!response.ok) {
@@ -153,7 +153,7 @@ export async function getChartData(
   }
 
   const response = await fetch(`${CHARTS_API}/${chartName}?${params}`, {
-    next: { revalidate: 300 }, // Cache for 5 minutes
+    cache: "no-store", // No cache for fresh data
   });
 
   if (!response.ok) {

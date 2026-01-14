@@ -8,6 +8,8 @@
  */
 
 import { PortfolioClient } from "@/components/portfolio/PortfolioClient";
+import { WorkflowBreadcrumb } from "@/components/workflow/WorkflowBreadcrumb";
+import { PagePurpose, PAGE_PURPOSES } from "@/components/workflow/PagePurpose";
 
 export const metadata = {
   title: "Portfolio | Finance Dashboard",
@@ -18,13 +20,14 @@ export default function PortfolioPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/20 to-gray-900 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
+        {/* Workflow Breadcrumb */}
+        <WorkflowBreadcrumb currentKey="portfolio" />
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">Portfolio</h1>
-            <p className="text-white/60">
-              Manual portfolio allocation across 12 economic engines
-            </p>
+            <PagePurpose purpose={PAGE_PURPOSES.portfolio} />
           </div>
         </div>
 
