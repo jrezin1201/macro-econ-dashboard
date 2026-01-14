@@ -10,7 +10,7 @@
  */
 
 import { useState, useCallback, useEffect } from "react";
-import type { MacroIndicator } from "@/lib/macro/types";
+import type { MacroIndicator, TimeSeriesDataPoint } from "@/lib/macro/types";
 import { PortfolioImpactPanel } from "./PortfolioImpactPanel";
 import { ThisWeekActionsPlaybook } from "./ThisWeekActionsPlaybook";
 import { ResponsiveIndicatorTable } from "./ResponsiveIndicatorTable";
@@ -151,21 +151,21 @@ interface Portfolio {
 
 interface ChartData {
   rates: {
-    fedfunds: any[];
-    dgs2: any[];
-    dgs10: any[];
+    fedfunds: TimeSeriesDataPoint[];
+    dgs2: TimeSeriesDataPoint[];
+    dgs10: TimeSeriesDataPoint[];
   };
   growth: {
-    sentiment: any[];
-    payems: any[];
+    sentiment: TimeSeriesDataPoint[];
+    payems: TimeSeriesDataPoint[];
   };
   inflation: {
-    cpi: any[];
-    pce: any[];
+    cpi: TimeSeriesDataPoint[];
+    pce: TimeSeriesDataPoint[];
   };
   credit: {
-    hyOAS: any[];
-    stlFSI: any[];
+    hyOAS: TimeSeriesDataPoint[];
+    stlFSI: TimeSeriesDataPoint[];
   };
 }
 

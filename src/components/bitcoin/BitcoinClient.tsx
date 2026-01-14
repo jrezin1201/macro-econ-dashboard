@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import { RefreshIndicator } from "@/components/common/RefreshIndicator";
 import { BitcoinPortfolioImpact } from "./BitcoinPortfolioImpact";
@@ -127,7 +127,7 @@ export function BitcoinClient({ initialAnalysis, initialGuidance, initialPrices,
           </p>
         </div>
 
-        <div className={`rounded-lg border p-4 ${getTrendBorderStyle(analysis.trendLevel as any)}`}>
+        <div className={`rounded-lg border p-4 ${getTrendBorderStyle(analysis.trendLevel)}`}>
           <p className="text-white/60 text-xs mb-1">BTC Trend</p>
           <p className="text-white text-lg font-bold">{analysis.trendLevel}</p>
         </div>
@@ -295,10 +295,10 @@ export function BitcoinClient({ initialAnalysis, initialGuidance, initialPrices,
         {/* Right: Portfolio Impact + MSTR Guidance */}
         <div className="space-y-6">
           {/* Portfolio Impact */}
-          <BitcoinPortfolioImpact btcTrendLevel={analysis.trendLevel as any} portfolio={portfolio} />
+          <BitcoinPortfolioImpact btcTrendLevel={analysis.trendLevel as "GREEN" | "YELLOW" | "RED"} portfolio={portfolio} />
 
           {/* MSTR Guidance */}
-          <div className={`rounded-lg border p-6 ${getAlertBorderStyle(mstrGuidance.alertLevel as any)}`}>
+          <div className={`rounded-lg border p-6 ${getAlertBorderStyle(mstrGuidance.alertLevel)}`}>
             <h2 className="text-xl font-bold text-white mb-4">MSTR Overlay Guidance</h2>
             <div className="mb-4">
               <span

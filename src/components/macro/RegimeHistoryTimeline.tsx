@@ -6,18 +6,13 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { getRegimeChanges, getRegimeStats, type RegimeSnapshot } from "@/lib/macro/regimeHistory";
 
 export function RegimeHistoryTimeline() {
-  const [changes, setChanges] = useState<RegimeSnapshot[]>([]);
-  const [stats, setStats] = useState<ReturnType<typeof getRegimeStats> | null>(null);
-
-  useEffect(() => {
-    setChanges(getRegimeChanges());
-    setStats(getRegimeStats());
-  }, []);
+  const [changes] = useState<RegimeSnapshot[]>(() => getRegimeChanges());
+  const [stats] = useState<ReturnType<typeof getRegimeStats> | null>(() => getRegimeStats());
 
   if (changes.length === 0) {
     return (

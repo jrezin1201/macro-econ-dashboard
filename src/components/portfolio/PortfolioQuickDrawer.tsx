@@ -24,6 +24,7 @@ export function PortfolioQuickDrawer({ open, onClose }: Props) {
     if (open) {
       const portfolio = getPortfolio();
       const portfolioSummary = generatePortfolioSummary(portfolio);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSummary(portfolioSummary);
     }
   }, [open]);

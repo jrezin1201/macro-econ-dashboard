@@ -97,7 +97,7 @@ export function PortfolioAllocationChart({ allocations }: Props) {
               verticalAlign="bottom"
               height={36}
               wrapperStyle={{ color: "rgba(255,255,255,0.8)", fontSize: "12px" }}
-              formatter={(value, entry: any) => `${value} (${entry.payload.value.toFixed(1)}%)`}
+              formatter={(value, entry: { payload?: { value?: number } }) => `${value} (${entry.payload?.value?.toFixed(1) ?? '0'}%)`}
             />
           </PieChart>
         </ResponsiveContainer>
@@ -131,9 +131,17 @@ const renderCustomizedLabel = ({
   innerRadius,
   outerRadius,
   percent,
-}: any) => {
+}: {
+  cx?: number;
+  cy?: number;
+  midAngle?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  percent?: number;
+}) => {
   // Only show label if slice is >5%
-  if (percent < 0.05) return null;
+  if (!percent || percent < 0.05) return null;
+  if (typeof cx === 'undefined' || typeof cy === 'undefined' || typeof midAngle === 'undefined' || typeof innerRadius === 'undefined' || typeof outerRadius === 'undefined') return null;
 
   const RADIAN = Math.PI / 180;
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;

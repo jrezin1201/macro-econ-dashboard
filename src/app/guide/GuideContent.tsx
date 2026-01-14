@@ -799,7 +799,7 @@ export function GuideContent() {
                         ✗ Avoid (Gated or Over)
                       </h4>
                       <p className={`text-xs ${isPrintMode ? "text-red-900" : "text-red-200/80"}`}>
-                        Engines that are GATED (risk-off signal) OR you're overweight an UNDERWEIGHT stance.
+                        Engines that are GATED (risk-off signal) OR you&apos;re overweight an UNDERWEIGHT stance.
                         Consider trimming.
                       </p>
                     </div>
@@ -807,7 +807,7 @@ export function GuideContent() {
                   <div className={`p-4 rounded border ${isPrintMode ? "bg-yellow-50 border-yellow-200" : "bg-yellow-500/10 border-yellow-500/20"}`}>
                     <p className={`text-xs ${isPrintMode ? "text-yellow-900" : "text-yellow-200/70"}`}>
                       ⚠️ <strong>Rebalancing Frequency:</strong> Only rebalance when a trigger hits or when adding new capital.
-                      Don't force trades just because deltas exist—transaction costs and taxes matter.
+                      Don&apos;t force trades just because deltas exist—transaction costs and taxes matter.
                     </p>
                   </div>
                   <div>

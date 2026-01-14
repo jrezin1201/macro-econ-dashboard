@@ -70,7 +70,7 @@ export function EngineScoresChart({ scores }: Props) {
                 borderRadius: "8px",
                 color: "#fff",
               }}
-              formatter={(value: number | undefined, name: string | undefined, props: any) => [
+              formatter={(value: number | undefined, name: string | undefined, props: { payload?: { stance?: string } }) => [
                 `${value ?? 0}/100`,
                 `${props?.payload?.stance ?? ""}`,
               ]}
