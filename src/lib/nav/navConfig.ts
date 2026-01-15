@@ -73,12 +73,6 @@ export const NAV_GROUPS: NavGroup[] = [
         description: "Identify the environment and risk posture",
       },
       {
-        label: "Economic Engines",
-        href: "/engines",
-        icon: Cog6ToothIcon,
-        description: "Translate environment into what to overweight/avoid",
-      },
-      {
         label: "Equity Breadth",
         href: "/macro/breadth",
         icon: ChartBarIcon,
@@ -95,6 +89,12 @@ export const NAV_GROUPS: NavGroup[] = [
         href: "/bitcoin",
         icon: CurrencyDollarIcon,
         description: "Confirmation: Crypto trend for volatility exposure",
+      },
+      {
+        label: "Economic Engines",
+        href: "/engines",
+        icon: Cog6ToothIcon,
+        description: "Translate environment into what to overweight/avoid",
       },
     ],
   },

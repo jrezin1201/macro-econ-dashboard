@@ -54,6 +54,18 @@ export function ThisWeekActionsPlaybook({ actionPolicy, isBeginnerMode }: Props)
           examples={getExamplesForLayers(actionPolicy.avoidLayers)}
         />
 
+        {/* What to Trim - Only show if there are trim recommendations */}
+        {actionPolicy.trimLayers && actionPolicy.trimLayers.length > 0 && (
+          <ActionRow
+            icon="↓"
+            iconColor="text-orange-400"
+            title="Consider Trimming These"
+            description="Reduce overweight positions in these layers"
+            layers={actionPolicy.trimLayers}
+            examples={getExamplesForLayers(actionPolicy.trimLayers)}
+          />
+        )}
+
         {/* Stability Buffer */}
         <ActionRow
           icon="◆"
@@ -222,6 +234,21 @@ function CompactVersion({ actionPolicy }: { actionPolicy: ActionPolicy }) {
             </p>
           </div>
         </div>
+
+        {/* Trim overweight positions */}
+        {actionPolicy.trimLayers && actionPolicy.trimLayers.length > 0 && (
+          <div className="flex items-start gap-2">
+            <span className="text-orange-400 mt-0.5">↓</span>
+            <div className="flex-1">
+              <p className="text-sm text-white font-medium">Consider trimming:</p>
+              <p className="text-sm text-white/80 mt-1">
+                {actionPolicy.trimLayers
+                  .map((layer) => LAYER_METADATA[layer].shortName)
+                  .join(", ")}
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Stability buffer */}
         <div className="flex items-start gap-2">

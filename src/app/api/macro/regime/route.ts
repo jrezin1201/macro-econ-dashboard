@@ -223,6 +223,7 @@ export async function GET() {
         zScore: z,
         status,
         units: config.units,
+        fetchedAt: new Date().toISOString(), // Add current timestamp
       };
     });
 

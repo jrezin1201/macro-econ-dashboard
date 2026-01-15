@@ -16,7 +16,7 @@ import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import { RefreshIndicator } from "@/components/common/RefreshIndicator";
 import { EngineTooltip } from "@/components/ui/EngineTooltip";
 import type { Portfolio } from "@/lib/portfolio/schema";
-import type { ScoringResult, EngineScore, MacroCase } from "@/lib/engines/engineScoring";
+import type { ScoringResult, EngineScore } from "@/lib/engines/engineScoring";
 
 interface ApiResponse {
   success: boolean;
@@ -42,7 +42,7 @@ export function EnginesClient() {
       setPortfolio(loaded);
 
       // Fetch engine scoring
-      const response = await fetch("/api/engines/score?mock=true"); // Use mock=true for now
+      const response = await fetch("/api/engines/score"); // Use real data
       if (!response.ok) {
         throw new Error("Failed to fetch engine scores");
       }

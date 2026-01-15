@@ -69,6 +69,7 @@ export interface ActionPolicy {
   thisWeekBias: string; // Plain English summary
   deployLayers: PortfolioLayer[]; // OK to add new capital
   avoidLayers: PortfolioLayer[]; // Do NOT add new capital
+  trimLayers: PortfolioLayer[]; // Consider trimming (overweight positions)
   stabilityMinimum: number; // % minimum for stability layer
   reasoningBullets: string[]; // 2-4 bullets explaining the stance
   rebalanceTriggers: string[]; // Conditions that would change the stance
@@ -83,6 +84,7 @@ export function getActionPolicy(
 ): ActionPolicy {
   const deployLayers: PortfolioLayer[] = [];
   const avoidLayers: PortfolioLayer[] = [];
+  const trimLayers: PortfolioLayer[] = [];
   const reasoningBullets: string[] = [];
   const rebalanceTriggers: string[] = [];
   const exampleTickers: string[] = [];
@@ -141,6 +143,26 @@ export function getActionPolicy(
     reasoningBullets.push(
       "🟡 Breadth divergence: cap growth, prefer quality cashflow"
     );
+  }
+
+  // ===== TRIMMING RULES =====
+  // If avoiding due to RED signals, also suggest trimming existing overweight positions
+
+  if (alertLevel === "RED" || microstressLevel === "RED") {
+    // Hard trim on volatility when conditions are severe
+    if (avoidLayers.includes("VOLATILITY_ASYMMETRY")) {
+      trimLayers.push("VOLATILITY_ASYMMETRY");
+    }
+    if (avoidLayers.includes("GROWTH_EQUITY")) {
+      trimLayers.push("GROWTH_EQUITY");
+    }
+  }
+
+  if (btcTrend === "RED") {
+    // Trim crypto specifically when Bitcoin breaks down
+    if (!trimLayers.includes("VOLATILITY_ASYMMETRY")) {
+      trimLayers.push("VOLATILITY_ASYMMETRY");
+    }
   }
 
   // ===== BASE POLICIES =====
@@ -235,6 +257,7 @@ export function getActionPolicy(
     thisWeekBias,
     deployLayers: Array.from(new Set(deployLayers)),
     avoidLayers: Array.from(new Set(avoidLayers)),
+    trimLayers: Array.from(new Set(trimLayers)),
     stabilityMinimum: ACTION_POLICY_CONFIG.stabilityMinimum,
     reasoningBullets,
     rebalanceTriggers,

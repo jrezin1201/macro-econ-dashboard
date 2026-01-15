@@ -13,7 +13,7 @@ const STORAGE_KEY = "portfolio_v1";
 const WEIGHT_TOLERANCE = 0.25; // Allow 99.75% - 100.25%
 
 /**
- * Demo portfolio (Jordan's approximate holdings)
+ * Demo portfolio - Balanced allocation across 12 economic engines
  * Used as fallback when user hasn't set their own
  */
 const DEMO_HOLDINGS: Holding[] = [
@@ -22,15 +22,23 @@ const DEMO_HOLDINGS: Holding[] = [
     ticker: "QQQM",
     name: "Invesco NASDAQ 100 ETF",
     account: "401K",
-    weightPct: 35,
+    weightPct: 25,
     assetType: "ETF",
+  },
+  {
+    id: uuidv4(),
+    ticker: "JNJ",
+    name: "Johnson & Johnson",
+    account: "ROTH",
+    weightPct: 15,
+    assetType: "EQUITY",
   },
   {
     id: uuidv4(),
     ticker: "SGOV",
     name: "iShares 0-3 Month Treasury Bond ETF",
     account: "401K",
-    weightPct: 30,
+    weightPct: 10,
     assetType: "ETF",
   },
   {
@@ -38,15 +46,39 @@ const DEMO_HOLDINGS: Holding[] = [
     ticker: "MSTR",
     name: "MicroStrategy",
     account: "TAXABLE",
-    weightPct: 15,
+    weightPct: 10,
     assetType: "EQUITY",
   },
   {
     id: uuidv4(),
-    ticker: "MSFT",
-    name: "Microsoft",
+    ticker: "XLI",
+    name: "Industrial Select Sector SPDR Fund",
+    account: "401K",
+    weightPct: 10,
+    assetType: "ETF",
+  },
+  {
+    id: uuidv4(),
+    ticker: "IWM",
+    name: "iShares Russell 2000 ETF",
     account: "ROTH",
     weightPct: 10,
+    assetType: "ETF",
+  },
+  {
+    id: uuidv4(),
+    ticker: "VEA",
+    name: "Vanguard FTSE Developed Markets ETF",
+    account: "ROTH",
+    weightPct: 5,
+    assetType: "ETF",
+  },
+  {
+    id: uuidv4(),
+    ticker: "PG",
+    name: "Procter & Gamble",
+    account: "ROTH",
+    weightPct: 5,
     assetType: "EQUITY",
   },
   {

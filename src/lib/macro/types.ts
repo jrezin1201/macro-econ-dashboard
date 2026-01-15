@@ -59,6 +59,7 @@ export interface MacroIndicator {
   zScore: number | null;
   status: "green" | "yellow" | "red" | "neutral";
   units?: string;
+  fetchedAt?: string; // ISO timestamp when data was fetched
 }
 
 export interface MacroRegimeData {

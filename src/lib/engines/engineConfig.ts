@@ -576,6 +576,7 @@ const tickerOverrides: Record<string, EngineId> = {
   CAT: "INFRASTRUCTURE_CAPEX",
   EMR: "INFRASTRUCTURE_CAPEX",
   PAVE: "INFRASTRUCTURE_CAPEX",
+  XLI: "INFRASTRUCTURE_CAPEX",
 
   // Small Caps & Domestic
   IWM: "SMALL_CAPS_DOMESTIC",
@@ -584,6 +585,7 @@ const tickerOverrides: Record<string, EngineId> = {
 
   // International & EM
   VXUS: "INTERNATIONAL_FX_EM",
+  VEA: "INTERNATIONAL_FX_EM",
   EEM: "INTERNATIONAL_FX_EM",
   VWO: "INTERNATIONAL_FX_EM",
   IEMG: "INTERNATIONAL_FX_EM",

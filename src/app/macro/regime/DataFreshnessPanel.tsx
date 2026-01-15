@@ -7,7 +7,7 @@
  */
 
 import { getSeriesMeta } from "@/lib/data/dataSourceRegistry";
-import { getLastFetchTime, formatFetchTime } from "@/lib/data/fetchWithMeta";
+import { formatFetchTime } from "@/lib/data/fetchWithMeta";
 import type { MacroIndicator } from "@/lib/macro/types";
 
 interface Props {
@@ -40,8 +40,8 @@ export function DataFreshnessPanel({ indicators }: Props) {
           <tbody>
             {uniqueSeries.map((seriesId) => {
               const meta = getSeriesMeta(seriesId);
-              const lastFetch = getLastFetchTime(seriesId);
               const indicator = indicators.find((ind) => ind.seriesId === seriesId);
+              const lastFetch = indicator?.fetchedAt ? new Date(indicator.fetchedAt) : null;
 
               if (!meta) return null;
 

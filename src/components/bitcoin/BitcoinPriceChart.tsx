@@ -14,12 +14,9 @@ interface BitcoinPrice {
 
 interface Props {
   prices: BitcoinPrice[];
-  ma20?: number | null;
-  ma50?: number | null;
-  ma200?: number | null;
 }
 
-export function BitcoinPriceChart({ prices, ma20, ma50, ma200 }: Props) {
+export function BitcoinPriceChart({ prices }: Props) {
   // Calculate moving averages
   const chartData = prices.map((point, i) => {
     const ma20Value = i >= 19 ? calculateMA(prices.slice(i - 19, i + 1)) : null;

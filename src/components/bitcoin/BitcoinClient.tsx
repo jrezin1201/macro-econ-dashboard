@@ -172,12 +172,7 @@ export function BitcoinClient({ initialAnalysis, initialGuidance, initialPrices,
       </div>
 
       {/* Price Chart */}
-      <BitcoinPriceChart
-        prices={prices}
-        ma20={metrics.ma20}
-        ma50={metrics.ma50}
-        ma200={metrics.ma200}
-      />
+      <BitcoinPriceChart prices={prices} />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

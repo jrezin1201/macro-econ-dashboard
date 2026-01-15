@@ -449,6 +449,9 @@ export function MacroRegimeDashboard({ data: initialData }: Props) {
         />
       </div>
 
+      {/* Anchor for Action section navigation */}
+      <div id="action" className="scroll-mt-20" />
+
       {/* Main Content Grid - Mobile-first responsive layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Mobile: Single column with "decisions first" ordering
@@ -456,7 +459,7 @@ export function MacroRegimeDashboard({ data: initialData }: Props) {
         <div className="lg:col-span-2 space-y-6 lg:order-1">
           {/* This Week Actions - Priority #1 on mobile */}
           {portfolio && (
-            <div id="action" className="lg:hidden">
+            <div className="lg:hidden">
               <ThisWeekActionsPlaybook
                 actionPolicy={portfolio.actionPolicy}
                 isBeginnerMode={isBeginnerMode}
@@ -608,7 +611,7 @@ export function MacroRegimeDashboard({ data: initialData }: Props) {
         <div className="space-y-6 lg:order-2">
           {/* NEW: This Week Actions Panel - Desktop only (mobile shows above) */}
           {portfolio && (
-            <div id="action" className="hidden lg:block">
+            <div className="hidden lg:block">
               <ThisWeekActionsPlaybook
                 actionPolicy={portfolio.actionPolicy}
                 isBeginnerMode={isBeginnerMode}
